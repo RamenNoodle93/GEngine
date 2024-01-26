@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Types.h"
 #include <vector>
+#include "Types.h"
 
 class Mesh
 {
 
 public:
-	std::vector<Node>* nodeList;
-	std::vector<Edge>* edgeList;
-	Mesh(std::vector<Node> nodes, std::vector<Edge> edges);
+	Mesh(std::vector<Node> nodes, std::vector<Triangle> tris);
 	~Mesh();
 
+	std::vector<Node>* nodeList;
+	std::vector<Triangle>* edgeList;
 };
 

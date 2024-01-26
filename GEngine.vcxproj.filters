@@ -11,15 +11,36 @@
     <Filter Include="Objects">
       <UniqueIdentifier>{a9dbdfa0-9ec6-45bb-9628-d932d4f10ef4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Window">
+      <UniqueIdentifier>{8fabdb48-e66c-4cc0-abc6-e6786f3eb2d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{30d0888a-c3f7-4f29-9925-b3e3b5d52683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{9731af23-8824-4fd9-910e-fabfbc64a4d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
+      <Filter>Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
       <Filter>Objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -31,6 +52,18 @@
       <Filter>Objects</Filter>
     </ClInclude>
     <ClInclude Include="Types.h">
+      <Filter>Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
       <Filter>Objects</Filter>
     </ClInclude>
   </ItemGroup>

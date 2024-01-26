@@ -1,3 +1,2 @@
-﻿  main.cpp
-C:\Users\Kacper\Desktop\Things\Programming\Projects\C++\GEngine\main.cpp(93,14): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+﻿  Window.cpp
   GEngine.vcxproj -> C:\Users\Kacper\Desktop\Things\Programming\Projects\C++\GEngine\x64\Debug\GEngine.exe
