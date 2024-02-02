@@ -22,3 +22,42 @@ void Tools::MultiplyMatrixVector(Node& i, Node& o, Mat4x4& m)
 		o.z /= w;
 	}
 }
+
+Mat4x4 Tools::GetRotationMatrixX(float rotationX)
+{
+	Mat4x4 rotationMatX;
+	rotationMatX.m[0][0] = 1.0f;
+	rotationMatX.m[1][1] = cosf(rotationX);
+	rotationMatX.m[1][2] = sinf(rotationX);
+	rotationMatX.m[2][1] = -sinf(rotationX);
+	rotationMatX.m[2][2] = cosf(rotationX);
+	rotationMatX.m[3][3] = 1.0f;
+
+	return rotationMatX;
+}
+
+Mat4x4 Tools::GetRotationMatrixY(float rotationY)
+{
+	Mat4x4 rotationMatY;
+	rotationMatY.m[0][0] = cosf(rotationY);
+	rotationMatY.m[0][2] = -sinf(rotationY);
+	rotationMatY.m[1][1] = 1.0f;
+	rotationMatY.m[2][0] = sinf(rotationY);
+	rotationMatY.m[2][2] = cosf(rotationY);
+	rotationMatY.m[3][3] = 1.0f;
+
+	return rotationMatY;
+}
+
+Mat4x4 Tools::GetRotationMatrixZ(float rotationZ)
+{
+	Mat4x4 rotationMatZ;
+	rotationMatZ.m[0][0] = cosf(rotationZ);
+	rotationMatZ.m[0][1] = -sinf(rotationZ);
+	rotationMatZ.m[1][0] = sinf(rotationZ);
+	rotationMatZ.m[1][1] = cosf(rotationZ);
+	rotationMatZ.m[2][2] = 1.0f;
+	rotationMatZ.m[3][3] = 1.0f;
+
+	return rotationMatZ;
+}

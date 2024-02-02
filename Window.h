@@ -6,13 +6,12 @@
 #include "Tools.h"
 #include "Types.h"
 #include "Game.h"
-#include "Mesh.h"
 
 class Window
 {
 private:
 	HWND hWnd;
-
+	std::vector<ProjectedObject> renderStack;
 public:
 	Window();
 	~Window();

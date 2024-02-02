@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game(float aspectRatio, float rotX, float rotY, float rotZ, float zNear, float zFar, float fov)
+Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 {
 	//Dane startowe
 	float pi = atan(1.0) * 4;
@@ -10,9 +10,21 @@ Game::Game(float aspectRatio, float rotX, float rotY, float rotZ, float zNear, f
 	Game::fovTan = 1.0f / tanf(Game::fov * 0.5f);
 	Game::aspectRatio = aspectRatio;
 
-	rotationX = rotX;
-	rotationY = rotY;
-	rotationZ = rotZ;
+	Node pos;
+	pos.x = 0.0f;
+	pos.y = 0.0f;
+	pos.z = 0.0f;
+	Node rot;
+	rot.x = 0.0f;
+	rot.y = 0.0f;
+	rot.z = 0.0f;
+
+	structures = std::vector<Object*>();
+
+	structures.push_back(new Cube(Node{ 0,0,4 }, Node{ 0,0,0 }));
+
+	camera.rotation = rot;
+	camera.position = pos;
 
 	//G³ówna macierz rzutuj¹ca
 	projMat.m[0][0] = Game::aspectRatio * Game::fovTan;
@@ -35,6 +47,7 @@ Mat4x4 Game::GetProj()
 
 Mat4x4 Game::GetRotX()
 {
+	float rotationX = camera.rotation.x;
 	rotationMatX.m[0][0] = 1.0f;
 	rotationMatX.m[1][1] = cosf(rotationX);
 	rotationMatX.m[1][2] = sinf(rotationX);
@@ -47,6 +60,7 @@ Mat4x4 Game::GetRotX()
 
 Mat4x4 Game::GetRotY()
 {
+	float rotationY = camera.rotation.y;
 	rotationMatY.m[0][0] = cosf(rotationY);
 	rotationMatY.m[0][2] = -sinf(rotationY);
 	rotationMatY.m[1][1] = 1.0f;
@@ -59,6 +73,7 @@ Mat4x4 Game::GetRotY()
 
 Mat4x4 Game::GetRotZ()
 {
+	float rotationZ = camera.rotation.z;
 	rotationMatZ.m[0][0] = cosf(rotationZ);
 	rotationMatZ.m[0][1] = -sinf(rotationZ);
 	rotationMatZ.m[1][0] = sinf(rotationZ);
@@ -69,6 +84,51 @@ Mat4x4 Game::GetRotZ()
 	return rotationMatZ;
 }
 
-Objects Game::GetProjected() {
+std::vector<ProjectedObject> Game::Update()
+{
+	Mat4x4 proj = GetProj();
 
+	std::vector<ProjectedObject> renderStack;
+
+	Mat4x4 rotx = GetRotX();
+	Mat4x4 roty = GetRotY();
+	Mat4x4 rotz = GetRotZ();
+
+	for (auto object : structures) {
+		std::vector<Point> objectVertices;
+		for (auto& node : object->GetVertices())
+		{
+			Node rotatedNodeXObject, rotatedNodeYObject, rotatedNodeZObject, translatedNode, rotatedNodeXCamera, rotatedNodeYCamera, rotatedNodeZCamera, projectedNode;
+
+			Mat4x4 rotationObjX = Tools::GetRotationMatrixX(object->rotation.x);
+			Mat4x4 rotationObjY = Tools::GetRotationMatrixY(object->rotation.y);
+			Mat4x4 rotationObjZ = Tools::GetRotationMatrixZ(object->rotation.z);
+
+			Tools::MultiplyMatrixVector(node, rotatedNodeXObject, rotationObjX);
+			Tools::MultiplyMatrixVector(rotatedNodeXObject, rotatedNodeYObject, rotationObjY);
+			Tools::MultiplyMatrixVector(rotatedNodeYObject, rotatedNodeZObject, rotationObjZ);
+
+			translatedNode = Node{
+				rotatedNodeZObject.x + camera.position.x + object->position.x,
+				rotatedNodeZObject.y + camera.position.y + object->position.y,
+				rotatedNodeZObject.z + camera.position.z + object->position.z
+			};
+
+			Tools::MultiplyMatrixVector(translatedNode, rotatedNodeXCamera, rotx);
+			Tools::MultiplyMatrixVector(rotatedNodeXCamera, rotatedNodeYCamera, roty);
+			Tools::MultiplyMatrixVector(rotatedNodeYCamera, rotatedNodeZCamera, rotz);
+
+			Tools::MultiplyMatrixVector(rotatedNodeZCamera, projectedNode, proj);
+
+			projectedNode.x *= 200;
+			projectedNode.y *= 200;
+
+			projectedNode.x += 400.0f;
+			projectedNode.y += 400.0f;
+
+			objectVertices.push_back(Point{ projectedNode.x, projectedNode.y });
+		}
+		renderStack.push_back(ProjectedObject{ objectVertices, object->GetEdges() });
+	}
+	return renderStack;
 }

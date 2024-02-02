@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "Mesh.h"
 
 struct Node {
 	float x;
@@ -14,16 +13,21 @@ struct Point {
 	float y;
 };
 
-struct Triangle {
+struct Edge {
 	int point1;
 	int point2;
-	int point3;
+};
+
+struct ProjectionData {
+	Node rotation;
+	Node position;
+};
+
+struct ProjectedObject {
+	std::vector<Point> points;
+	std::vector<Edge> edges;
 };
 
 struct Mat4x4 {
 	float m[4][4] = { 0.0f };
-};
-
-struct Objects {
-	std::vector<Mesh> obj;
 };

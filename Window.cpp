@@ -2,11 +2,11 @@
 
 Graphics* graphics;
 Game* game;
-std::vector<Node> finally;
 
 Window::Window()
 {
 	hWnd = NULL;
+	renderStack = std::vector<ProjectedObject>();
 }
 
 Window::~Window()
@@ -43,42 +43,7 @@ HWND Window::Create(HINSTANCE hInstance, int width, int height)
 
 void Window::Update()
 {
-	Mat4x4 proj = game->GetProj();
-
-	std::vector<Node> nodes, filled;
-
-	game->rotationX += 0.01f;
-	game->rotationZ += 0.003f;
-	game->rotationY += 0.02f;
-
-	for (auto& node : nodes)
-	{
-		Node projectedNode, rotatedNodeX, rotatedNodeY, rotatedNodeZ, translatedNode;
-
-		Mat4x4 rotx = game->GetRotX();
-		Mat4x4 roty = game->GetRotY();
-		Mat4x4 rotz = game->GetRotZ();
-
-		Tools::MultiplyMatrixVector(node, rotatedNodeX, rotx);
-		Tools::MultiplyMatrixVector(rotatedNodeX, rotatedNodeY, roty);
-		Tools::MultiplyMatrixVector(rotatedNodeY, rotatedNodeZ, rotz);
-
-		translatedNode = rotatedNodeZ;
-
-		translatedNode.z += 5.0f;
-
-		Tools::MultiplyMatrixVector(translatedNode, projectedNode, proj);
-
-		projectedNode.x *= 200;
-		projectedNode.y *= 200;
-
-		projectedNode.x += 400.0f;
-		projectedNode.y += 400.0f;
-
-		filled.push_back(projectedNode);
-
-	}
-	finally = filled;
+	renderStack = game->Update();
 }
 
 void Window::Render()
@@ -86,9 +51,11 @@ void Window::Render()
 	graphics->BeginDraw();
 	graphics->ClearScreen(0.0f, 0.0f, 0.0f);
 
-	for (auto& node : finally)
+
+	for (auto& obj : renderStack)
 	{
-		graphics->DrawCircle(node.x, node.y, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+		for (auto& point : obj.points)
+			graphics->DrawCircle(point.x, point.y, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 	}
 
 	graphics->EndDraw();

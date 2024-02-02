@@ -2,7 +2,6 @@
 #include <Windows.h>
 #include <cmath>
 #include "Window.h"
-#include "Mesh.h"
 
 
 Window* window;
@@ -19,6 +18,8 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 	//freopen_s(&fp, "CONIN$", "r", stdin);
 	//freopen_s(&fp, "CONOUT$", "w", stdout);
 	//freopen_s(&fp, "CONOUT$", "w", stderr);
+
+	window = new Window();
 
 	HWND mainHandle = window->Create(hInstance, 800, 800);
 	ShowWindow(mainHandle, nCmdShow);
