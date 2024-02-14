@@ -24,14 +24,15 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 	HWND mainHandle = window->Create(hInstance, 800, 800);
 	ShowWindow(mainHandle, nCmdShow);
 
-	MSG message;
-
-	message.message = WM_NULL;
+	MSG message = { 0 };
 
 	while (message.message != WM_QUIT)
 	{
-		if (PeekMessage(&message, mainHandle, 0, 0, PM_REMOVE))
+		if (PeekMessage(&message, 0, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&message);
 			DispatchMessage(&message);
+		}
+
 		else {
 			window->Update();
 			window->Render();

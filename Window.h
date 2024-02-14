@@ -11,7 +11,7 @@ class Window
 {
 private:
 	HWND hWnd;
-	std::vector<ProjectedObject> renderStack;
+
 public:
 	Window();
 	~Window();

@@ -23,6 +23,28 @@ void Tools::MultiplyMatrixVector(Node& i, Node& o, Mat4x4& m)
 	}
 }
 
+Node Tools::AddVectors(Node& vec1, Node& vec2)
+{
+	Node added;
+	added.x = vec1.x + vec2.x;
+	added.y = vec1.y + vec2.y;
+	added.z = vec1.z + vec2.z;
+	return added;
+}
+
+Mat4x4 Tools::Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2)
+{
+	Mat4x4 multiplied;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++)
+		{
+			for (int k = 0; k < 4; k++)
+				multiplied.m[i][j] += mat1.m[i][k] * mat2.m[k][j];
+		}
+	}
+	return multiplied;
+}
+
 Mat4x4 Tools::GetRotationMatrixX(float rotationX)
 {
 	Mat4x4 rotationMatX;

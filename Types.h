@@ -3,19 +3,11 @@
 #include <vector>
 
 struct Node {
-	float x;
-	float y;
-	float z;
+	float x, y, z;
 };
 
 struct Point {
-	float x;
-	float y;
-};
-
-struct Edge {
-	int point1;
-	int point2;
+	float x, y;
 };
 
 struct ProjectionData {
@@ -23,9 +15,12 @@ struct ProjectionData {
 	Node position;
 };
 
-struct ProjectedObject {
-	std::vector<Point> points;
-	std::vector<Edge> edges;
+struct Triangle {
+	Node p[3];
+};
+
+struct Mesh {
+	std::vector<Triangle> tris;
 };
 
 struct Mat4x4 {

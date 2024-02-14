@@ -20,9 +20,6 @@
     <Filter Include="Tools">
       <UniqueIdentifier>{9731af23-8824-4fd9-910e-fabfbc64a4d9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Objects\Custom">
-      <UniqueIdentifier>{fda541a6-a65f-4726-9eab-a903ef62aca3}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics.cpp">
@@ -40,12 +37,6 @@
     <ClCompile Include="Tools.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Cube.cpp">
-      <Filter>Objects\Custom</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics.h">
@@ -62,12 +53,6 @@
     </ClInclude>
     <ClInclude Include="Tools.h">
       <Filter>Tools</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>Objects\Custom</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

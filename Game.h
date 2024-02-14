@@ -3,8 +3,6 @@
 #include <cmath>
 
 #include "Types.h"
-#include "Cube.h"
-#include "Object.h"
 #include "Tools.h"
 
 class Game
@@ -19,7 +17,7 @@ private:
 	Mat4x4 rotationMatX;
 	Mat4x4 rotationMatY;
 	Mat4x4 rotationMatZ;
-	std::vector<Object*> structures;
+
 public:
 	Game(float aspectRatio, float zNear = 0.1f, float zFar = 1000.0f, float fov = 90.0f);
 	~Game();
@@ -27,7 +25,7 @@ public:
 	Mat4x4 GetRotX();
 	Mat4x4 GetRotY();
 	Mat4x4 GetRotZ();
-	std::vector<ProjectedObject> Update();
+	void Update();
 	ProjectionData camera;
 };
 
