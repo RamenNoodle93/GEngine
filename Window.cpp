@@ -35,6 +35,10 @@ HWND Window::Create(HINSTANCE hInstance, int width, int height)
 
 	HWND windowhandle = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"MainWindow", L"MyGame", windowStyle, 100, 100, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, 0);
 
+
+
+
+
 	graphics->Init(windowhandle);
 
 	return windowhandle;
@@ -42,7 +46,7 @@ HWND Window::Create(HINSTANCE hInstance, int width, int height)
 
 void Window::Update()
 {
-	//renderStack = game->Update();
+	renderStack = game->Update();
 }
 
 void Window::Render()
@@ -50,6 +54,10 @@ void Window::Render()
 	graphics->BeginDraw();
 	graphics->ClearScreen(0.0f, 0.0f, 0.0f);
 
+	for (auto& point : renderStack)
+	{
+		graphics->DrawCircle(point.x, point.y, 1, 1, 1.0f, 0.0f, 0.0f, 1.0f);
+	}
 
 	graphics->EndDraw();
 }

@@ -11,6 +11,7 @@ class Window
 {
 private:
 	HWND hWnd;
+	std::vector<Point> renderStack;
 
 public:
 	Window();

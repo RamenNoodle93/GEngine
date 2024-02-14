@@ -25,7 +25,7 @@ public:
 	Mat4x4 GetRotX();
 	Mat4x4 GetRotY();
 	Mat4x4 GetRotZ();
-	void Update();
+	std::vector<Point> Update();
 	ProjectionData camera;
 };
 

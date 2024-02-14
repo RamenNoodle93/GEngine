@@ -30,6 +30,7 @@ Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 	projMat.m[3][2] = (-Game::zFar * Game::zNear) / (Game::zFar - Game::zNear);
 	projMat.m[2][3] = 1.0f;
 	projMat.m[3][3] = 0.0f;
+
 }
 
 Game::~Game()
@@ -81,10 +82,9 @@ Mat4x4 Game::GetRotZ()
 	return rotationMatZ;
 }
 
-void Game::Update()
+std::vector<Point> Game::Update()
 {
 	Mat4x4 proj = GetProj();
-
 
 	Mat4x4 rotx = GetRotX();
 	Mat4x4 roty = GetRotY();
@@ -116,12 +116,46 @@ void Game::Update()
 
 	float rotationX = 0.0f, rotationY = 0.0f, rotationZ = 0.0f;
 
-	for (auto tri : meshCube.tris)
+	std::vector<Point> projectedPoints;
+
+	ProjectionData fullpos;
+	fullpos.position = { -0.5f, -0.5f, 1.0f };
+
+	for (auto& tri : meshCube.tris)
 	{
 		Mat4x4 rotationObjX = Tools::GetRotationMatrixX(rotationX);
 		Mat4x4 rotationObjY = Tools::GetRotationMatrixY(rotationY);
 		Mat4x4 rotationObjZ = Tools::GetRotationMatrixZ(rotationZ);
+
+		Triangle translated, projected, rotatedX, rotatedY, rotatedZ;
+
+		Tools::MultiplyMatrixVector(tri.p[0], rotatedX.p[0], rotationObjX);
+		Tools::MultiplyMatrixVector(tri.p[1], rotatedX.p[1], rotationObjX);
+		Tools::MultiplyMatrixVector(tri.p[2], rotatedX.p[2], rotationObjX);
+
+		Tools::MultiplyMatrixVector(rotatedX.p[0], rotatedY.p[0], rotationObjY);
+		Tools::MultiplyMatrixVector(rotatedX.p[1], rotatedY.p[1], rotationObjY);
+		Tools::MultiplyMatrixVector(rotatedX.p[2], rotatedY.p[2], rotationObjY);
+
+		Tools::MultiplyMatrixVector(rotatedY.p[0], rotatedZ.p[0], rotationObjZ);
+		Tools::MultiplyMatrixVector(rotatedY.p[1], rotatedZ.p[1], rotationObjZ);
+		Tools::MultiplyMatrixVector(rotatedY.p[2], rotatedZ.p[2], rotationObjZ);
+
+		translated.p[0] = Tools::AddVectors(fullpos.position, rotatedZ.p[0]);
+		translated.p[1] = Tools::AddVectors(fullpos.position, rotatedZ.p[1]);
+		translated.p[2] = Tools::AddVectors(fullpos.position, rotatedZ.p[2]);
+
+		Tools::MultiplyMatrixVector(translated.p[0], projected.p[0], projMat);
+		Tools::MultiplyMatrixVector(translated.p[1], projected.p[1], projMat);
+		Tools::MultiplyMatrixVector(translated.p[2], projected.p[2], projMat);
+
+		for (int i = 0; i < 3; i++) {
+
+			projectedPoints.push_back(Point{ projected.p[i].x * 50 + 400, projected.p[i].y * 50 + 400 });
+
+		}
 	}
+	return projectedPoints;
 
 	//for (auto object : structures) {
 

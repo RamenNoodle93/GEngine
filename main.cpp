@@ -12,12 +12,8 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 					LPWSTR cmd,
 					int nCmdShow)
 {
-	//FILE* fp;
 
-	//AllocConsole();
-	//freopen_s(&fp, "CONIN$", "r", stdin);
-	//freopen_s(&fp, "CONOUT$", "w", stdout);
-	//freopen_s(&fp, "CONOUT$", "w", stderr);
+
 
 	window = new Window();
 
