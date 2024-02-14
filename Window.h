@@ -11,7 +11,7 @@ class Window
 {
 private:
 	HWND hWnd;
-	std::vector<Point> renderStack;
+	std::vector<Triangle2D> renderStack;
 
 public:
 	Window();

@@ -43,54 +43,9 @@ Mat4x4 Game::GetProj()
 	return Game::projMat;
 }
 
-Mat4x4 Game::GetRotX()
-{
-	float rotationX = camera.rotation.x;
-	rotationMatX.m[0][0] = 1.0f;
-	rotationMatX.m[1][1] = cosf(rotationX);
-	rotationMatX.m[1][2] = sinf(rotationX);
-	rotationMatX.m[2][1] = -sinf(rotationX);
-	rotationMatX.m[2][2] = cosf(rotationX);
-	rotationMatX.m[3][3] = 1.0f;
-
-	return rotationMatX;
-}
-
-Mat4x4 Game::GetRotY()
-{
-	float rotationY = camera.rotation.y;
-	rotationMatY.m[0][0] = cosf(rotationY);
-	rotationMatY.m[0][2] = -sinf(rotationY);
-	rotationMatY.m[1][1] = 1.0f;
-	rotationMatY.m[2][0] = sinf(rotationY);
-	rotationMatY.m[2][2] = cosf(rotationY);
-	rotationMatY.m[3][3] = 1.0f;
-
-	return rotationMatY;
-}
-
-Mat4x4 Game::GetRotZ()
-{
-	float rotationZ = camera.rotation.z;
-	rotationMatZ.m[0][0] = cosf(rotationZ);
-	rotationMatZ.m[0][1] = -sinf(rotationZ);
-	rotationMatZ.m[1][0] = sinf(rotationZ);
-	rotationMatZ.m[1][1] = cosf(rotationZ);
-	rotationMatZ.m[2][2] = 1.0f;
-	rotationMatZ.m[3][3] = 1.0f;
-
-	return rotationMatZ;
-}
-
-std::vector<Point> Game::Update()
+std::vector<Triangle2D> Game::Update()
 {
 	Mat4x4 proj = GetProj();
-
-	Mat4x4 rotx = GetRotX();
-	Mat4x4 roty = GetRotY();
-	Mat4x4 rotz = GetRotZ();
-
-	camera.position.z -= 0.01;
 
 	Mesh meshCube;
 	meshCube.tris = {
@@ -114,83 +69,67 @@ std::vector<Point> Game::Update()
 		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
 	};
 
-	float rotationX = 0.0f, rotationY = 0.0f, rotationZ = 0.0f;
+	std::vector<Triangle2D> projectedTris;
 
-	std::vector<Point> projectedPoints;
+	PositionData objPos;
+	objPos.position = { 0.0f, 0.0f, 5.0f };
+	objPos.rotation = { PI, 0.0f, 0.0f };
 
-	ProjectionData fullpos;
-	fullpos.position = { -0.5f, -0.5f, 1.0f };
+	Mesh loadedObj;
 
-	for (auto& tri : meshCube.tris)
+	loadedObj.LoadFromObjectFile("teapot.obj");
+
+	for (auto& tri : loadedObj.tris)
 	{
-		Mat4x4 rotationObjX = Tools::GetRotationMatrixX(rotationX);
-		Mat4x4 rotationObjY = Tools::GetRotationMatrixY(rotationY);
-		Mat4x4 rotationObjZ = Tools::GetRotationMatrixZ(rotationZ);
 
-		Triangle translated, projected, rotatedX, rotatedY, rotatedZ;
+		camera.rotation.z += 0.00001f;
 
-		Tools::MultiplyMatrixVector(tri.p[0], rotatedX.p[0], rotationObjX);
-		Tools::MultiplyMatrixVector(tri.p[1], rotatedX.p[1], rotationObjX);
-		Tools::MultiplyMatrixVector(tri.p[2], rotatedX.p[2], rotationObjX);
+		Node relativePosition = Tools::AddVectors(objPos.position, camera.position);
 
-		Tools::MultiplyMatrixVector(rotatedX.p[0], rotatedY.p[0], rotationObjY);
-		Tools::MultiplyMatrixVector(rotatedX.p[1], rotatedY.p[1], rotationObjY);
-		Tools::MultiplyMatrixVector(rotatedX.p[2], rotatedY.p[2], rotationObjY);
+		Triangle rotatedSelf, rotatedOrigin, translated, projected;
 
-		Tools::MultiplyMatrixVector(rotatedY.p[0], rotatedZ.p[0], rotationObjZ);
-		Tools::MultiplyMatrixVector(rotatedY.p[1], rotatedZ.p[1], rotationObjZ);
-		Tools::MultiplyMatrixVector(rotatedY.p[2], rotatedZ.p[2], rotationObjZ);
+		Triangle2D tempTriangle;
 
-		translated.p[0] = Tools::AddVectors(fullpos.position, rotatedZ.p[0]);
-		translated.p[1] = Tools::AddVectors(fullpos.position, rotatedZ.p[1]);
-		translated.p[2] = Tools::AddVectors(fullpos.position, rotatedZ.p[2]);
+		Mat4x4 rotationMatrixX, rotationMatrixY, rotationMatrixZ, temp, worldMatrix;
 
-		Tools::MultiplyMatrixVector(translated.p[0], projected.p[0], projMat);
-		Tools::MultiplyMatrixVector(translated.p[1], projected.p[1], projMat);
-		Tools::MultiplyMatrixVector(translated.p[2], projected.p[2], projMat);
+		rotationMatrixX = Tools::GetRotationMatrixX(objPos.rotation.x);
+		rotationMatrixY = Tools::GetRotationMatrixY(objPos.rotation.y);
+		rotationMatrixZ = Tools::GetRotationMatrixZ(objPos.rotation.z);
+
+		temp = Tools::Mulitply4x4Matrices(rotationMatrixY, rotationMatrixZ);
+
+		worldMatrix = Tools::Mulitply4x4Matrices(rotationMatrixX, temp);
+
+		Tools::MultiplyMatrixVector(tri.p[0], rotatedSelf.p[0], worldMatrix);
+		Tools::MultiplyMatrixVector(tri.p[1], rotatedSelf.p[1], worldMatrix);
+		Tools::MultiplyMatrixVector(tri.p[2], rotatedSelf.p[2], worldMatrix);
+
+		translated.p[0] = Tools::AddVectors(relativePosition, rotatedSelf.p[0]);
+		translated.p[1] = Tools::AddVectors(relativePosition, rotatedSelf.p[1]);
+		translated.p[2] = Tools::AddVectors(relativePosition, rotatedSelf.p[2]);
+
+		rotationMatrixX = Tools::GetRotationMatrixX(camera.rotation.x);
+		rotationMatrixY = Tools::GetRotationMatrixY(camera.rotation.y);
+		rotationMatrixZ = Tools::GetRotationMatrixZ(camera.rotation.z);
+
+		temp = Tools::Mulitply4x4Matrices(rotationMatrixY, rotationMatrixZ);
+
+		worldMatrix = Tools::Mulitply4x4Matrices(rotationMatrixX, temp);
+
+		Tools::MultiplyMatrixVector(translated.p[0], rotatedOrigin.p[0], worldMatrix);
+		Tools::MultiplyMatrixVector(translated.p[1], rotatedOrigin.p[1], worldMatrix);
+		Tools::MultiplyMatrixVector(translated.p[2], rotatedOrigin.p[2], worldMatrix);
+
+		Tools::MultiplyMatrixVector(rotatedOrigin.p[0], projected.p[0], projMat);
+		Tools::MultiplyMatrixVector(rotatedOrigin.p[1], projected.p[1], projMat);
+		Tools::MultiplyMatrixVector(rotatedOrigin.p[2], projected.p[2], projMat);
 
 		for (int i = 0; i < 3; i++) {
-
-			projectedPoints.push_back(Point{ projected.p[i].x * 50 + 400, projected.p[i].y * 50 + 400 });
-
+			tempTriangle.p[i] = Point{ projected.p[i].x * 200 + 400, projected.p[i].y * 200 + 400 };
 		}
+
+		projectedTris.push_back(tempTriangle);
 	}
-	return projectedPoints;
+	return projectedTris;
 
-	//for (auto object : structures) {
-
-	//Mat4x4 rotationObjX = Tools::GetRotationMatrixX(object->rotation.x);
-	//Mat4x4 rotationObjY = Tools::GetRotationMatrixY(object->rotation.y);
-	//Mat4x4 rotationObjZ = Tools::GetRotationMatrixZ(object->rotation.z);
-	/*
-	for (auto& node : object->GetVertices())
-	{
-		Node rotatedNodeXObject, rotatedNodeYObject, rotatedNodeZObject, translatedNode, rotatedNodeXCamera, rotatedNodeYCamera, rotatedNodeZCamera, projectedNode;
-
-		Tools::MultiplyMatrixVector(node, rotatedNodeXObject, rotationObjX);
-		Tools::MultiplyMatrixVector(rotatedNodeXObject, rotatedNodeYObject, rotationObjY);
-		Tools::MultiplyMatrixVector(rotatedNodeYObject, rotatedNodeZObject, rotationObjZ);
-
-		translatedNode = Node{
-			rotatedNodeZObject.x + camera.position.x + object->position.x,
-			rotatedNodeZObject.y + camera.position.y + object->position.y,
-			rotatedNodeZObject.z + camera.position.z + object->position.z
-		};
-
-		Tools::MultiplyMatrixVector(translatedNode, rotatedNodeXCamera, rotx);
-		Tools::MultiplyMatrixVector(rotatedNodeXCamera, rotatedNodeYCamera, roty);
-		Tools::MultiplyMatrixVector(rotatedNodeYCamera, rotatedNodeZCamera, rotz);
-
-		Tools::MultiplyMatrixVector(rotatedNodeZCamera, projectedNode, proj);
-
-		projectedNode.x *= 200;
-		projectedNode.y *= 200;
-
-		projectedNode.x += 400.0f;
-		projectedNode.y += 400.0f;
-
-		objectVertices.push_back(Point{ projectedNode.x, projectedNode.y });
-	}
-	*/
-	//}
 }

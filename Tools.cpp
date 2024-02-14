@@ -32,6 +32,11 @@ Node Tools::AddVectors(Node& vec1, Node& vec2)
 	return added;
 }
 
+//Node Tools::CalculateNormal(Triangle& triangle)
+//{
+//
+//}
+
 Mat4x4 Tools::Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2)
 {
 	Mat4x4 multiplied;

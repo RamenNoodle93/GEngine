@@ -54,9 +54,11 @@ void Window::Render()
 	graphics->BeginDraw();
 	graphics->ClearScreen(0.0f, 0.0f, 0.0f);
 
-	for (auto& point : renderStack)
+	for (auto& tri : renderStack)
 	{
-		graphics->DrawCircle(point.x, point.y, 1, 1, 1.0f, 0.0f, 0.0f, 1.0f);
+		graphics->DrawLine(tri.p[0].x, tri.p[0].y, tri.p[1].x, tri.p[1].y, 1, 1.0f, 1.0f, 1.0f, 1.0f);
+		graphics->DrawLine(tri.p[1].x, tri.p[1].y, tri.p[2].x, tri.p[2].y, 1, 1.0f, 1.0f, 1.0f, 1.0f);
+		graphics->DrawLine(tri.p[2].x, tri.p[2].y, tri.p[0].x, tri.p[0].y, 1, 1.0f, 1.0f, 1.0f, 1.0f);
 	}
 
 	graphics->EndDraw();
