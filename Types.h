@@ -8,7 +8,10 @@
 #define PI 3.14159265358979323846
 
 struct Node {
-	float x, y, z;
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+	float w = 1.0f;
 };
 
 struct Point {

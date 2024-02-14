@@ -7,12 +7,11 @@ Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 	Game::zNear = zNear;
 	Game::zFar = zFar;
 	Game::fov = fov * pi / 180.0f;
-	Game::fovTan = 1.0f / tanf(Game::fov * 0.5f);
 	Game::aspectRatio = aspectRatio;
 
 	Node pos;
 	pos.x = 0.0f;
-	pos.y = 0.0f;
+	pos.y = 1.0f;
 	pos.z = 0.0f;
 
 	Node rot;
@@ -23,13 +22,10 @@ Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 	camera.rotation = rot;
 	camera.position = pos;
 
-	//G³ówna macierz rzutuj¹ca
-	projMat.m[0][0] = Game::aspectRatio * Game::fovTan;
-	projMat.m[1][1] = Game::fovTan;
-	projMat.m[2][2] = Game::zFar / (Game::zFar - Game::zNear);
-	projMat.m[3][2] = (-Game::zFar * Game::zNear) / (Game::zFar - Game::zNear);
-	projMat.m[2][3] = 1.0f;
-	projMat.m[3][3] = 0.0f;
+	objPos.position = { 0.0f, 0.0f, 4.0f };
+	objPos.rotation = { 0.0f, 0.0f, 0.0f };
+
+	projMat = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
 }
 
@@ -38,42 +34,13 @@ Game::~Game()
 
 }
 
-Mat4x4 Game::GetProj()
+std::vector<Triangle> Game::Update()
 {
-	return Game::projMat;
-}
+	objPos.rotation.y += 0.01;
 
-std::vector<Triangle2D> Game::Update()
-{
-	Mat4x4 proj = GetProj();
+	Mat4x4 proj = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
-	Mesh meshCube;
-	meshCube.tris = {
-
-		{ 0.0f, 0.0f, 0.0f,    0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-
-		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f },
-		{ 1.0f, 0.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 0.0f, 1.0f },
-
-		{ 1.0f, 0.0f, 1.0f,    1.0f, 1.0f, 1.0f,    0.0f, 1.0f, 1.0f },
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 0.0f, 1.0f },
-
-		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 1.0f,    0.0f, 1.0f, 0.0f },
-		{ 0.0f, 0.0f, 1.0f,    0.0f, 1.0f, 0.0f,    0.0f, 0.0f, 0.0f },
-
-		{ 0.0f, 1.0f, 0.0f,    0.0f, 1.0f, 1.0f,    1.0f, 1.0f, 1.0f },
-		{ 0.0f, 1.0f, 0.0f,    1.0f, 1.0f, 1.0f,    1.0f, 1.0f, 0.0f },
-
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f },
-		{ 1.0f, 0.0f, 1.0f,    0.0f, 0.0f, 0.0f,    1.0f, 0.0f, 0.0f },
-	};
-
-	std::vector<Triangle2D> projectedTris;
-
-	PositionData objPos;
-	objPos.position = { 0.0f, 0.0f, 5.0f };
-	objPos.rotation = { PI, 0.0f, 0.0f };
+	std::vector<Triangle> projectedTris;
 
 	Mesh loadedObj;
 
@@ -82,54 +49,75 @@ std::vector<Triangle2D> Game::Update()
 	for (auto& tri : loadedObj.tris)
 	{
 
-		camera.rotation.z += 0.00001f;
+		Node relativePosition, faceNormal, temp;
 
-		Node relativePosition = Tools::AddVectors(objPos.position, camera.position);
+		//Pozycja obiektu wzgledem kamery
+		Tools::AddVectors(objPos.position, camera.position, relativePosition);
 
-		Triangle rotatedSelf, rotatedOrigin, translated, projected;
+		Triangle rotatedSelf, rotatedOrigin, translated, projected, tempTriangle;
 
-		Triangle2D tempTriangle;
+		Mat4x4 worldMatrix;
 
-		Mat4x4 rotationMatrixX, rotationMatrixY, rotationMatrixZ, temp, worldMatrix;
+		//Obracanie obiektu wokol samego siebie
+		worldMatrix = Tools::GetWorldMatrix(objPos.rotation.x, objPos.rotation.y, objPos.rotation.z);
 
-		rotationMatrixX = Tools::GetRotationMatrixX(objPos.rotation.x);
-		rotationMatrixY = Tools::GetRotationMatrixY(objPos.rotation.y);
-		rotationMatrixZ = Tools::GetRotationMatrixZ(objPos.rotation.z);
+		Tools::MatrixMultiplyTriangle(tri, worldMatrix, rotatedSelf);
 
-		temp = Tools::Mulitply4x4Matrices(rotationMatrixY, rotationMatrixZ);
+		Tools::TranslateTriangle(rotatedSelf, relativePosition, translated);
 
-		worldMatrix = Tools::Mulitply4x4Matrices(rotationMatrixX, temp);
+		//Obracanie obiektu wokol kamery
+		worldMatrix = Tools::GetWorldMatrix(camera.rotation.x, camera.rotation.y, camera.rotation.z);
 
-		Tools::MultiplyMatrixVector(tri.p[0], rotatedSelf.p[0], worldMatrix);
-		Tools::MultiplyMatrixVector(tri.p[1], rotatedSelf.p[1], worldMatrix);
-		Tools::MultiplyMatrixVector(tri.p[2], rotatedSelf.p[2], worldMatrix);
+		Tools::MatrixMultiplyTriangle(translated, worldMatrix, rotatedOrigin);
 
-		translated.p[0] = Tools::AddVectors(relativePosition, rotatedSelf.p[0]);
-		translated.p[1] = Tools::AddVectors(relativePosition, rotatedSelf.p[1]);
-		translated.p[2] = Tools::AddVectors(relativePosition, rotatedSelf.p[2]);
+		Tools::CalculateNormal(rotatedOrigin, faceNormal);
+		Tools::NormalizeVector(faceNormal, faceNormal);
 
-		rotationMatrixX = Tools::GetRotationMatrixX(camera.rotation.x);
-		rotationMatrixY = Tools::GetRotationMatrixY(camera.rotation.y);
-		rotationMatrixZ = Tools::GetRotationMatrixZ(camera.rotation.z);
+		temp.x = rotatedOrigin.p[0].x - camera.position.x;
+		temp.y = rotatedOrigin.p[0].y - camera.position.y;
+		temp.z = rotatedOrigin.p[0].z - camera.position.z;
 
-		temp = Tools::Mulitply4x4Matrices(rotationMatrixY, rotationMatrixZ);
+		//Sprawdzanie czy trojkat jest widoczny
 
-		worldMatrix = Tools::Mulitply4x4Matrices(rotationMatrixX, temp);
+		if (Tools::DotProduct(faceNormal, temp) < 0.0f)
+		{
 
-		Tools::MultiplyMatrixVector(translated.p[0], rotatedOrigin.p[0], worldMatrix);
-		Tools::MultiplyMatrixVector(translated.p[1], rotatedOrigin.p[1], worldMatrix);
-		Tools::MultiplyMatrixVector(translated.p[2], rotatedOrigin.p[2], worldMatrix);
+			int nClippedTriangles = 0;
+			Triangle clipped[2];
+			Node planeVec, planeNormal;
 
-		Tools::MultiplyMatrixVector(rotatedOrigin.p[0], projected.p[0], projMat);
-		Tools::MultiplyMatrixVector(rotatedOrigin.p[1], projected.p[1], projMat);
-		Tools::MultiplyMatrixVector(rotatedOrigin.p[2], projected.p[2], projMat);
+			planeVec = { 0.0f, 0.0f, 0.1f };
+			planeNormal = { 0.0f, 0.0f, 0.1f };
 
-		for (int i = 0; i < 3; i++) {
-			tempTriangle.p[i] = Point{ projected.p[i].x * 200 + 400, projected.p[i].y * 200 + 400 };
+			nClippedTriangles = Tools::ClipTriangle(planeVec, planeNormal, rotatedOrigin, clipped[0], clipped[1]);
+
+			// We may end up with multiple triangles form the clip, so project as
+			// required
+			for (int n = 0; n < nClippedTriangles; n++)
+			{
+				Triangle scaled;
+				Tools::MatrixMultiplyTriangle(clipped[n], projMat, projected);
+
+				Tools::DivideVector(projected.p[0], projected.p[0].w, scaled.p[0]);
+				Tools::DivideVector(projected.p[1], projected.p[1].w, scaled.p[1]);
+				Tools::DivideVector(projected.p[2], projected.p[2].w, scaled.p[2]);
+
+				for (int i = 0; i < 3; i++) {
+					tempTriangle.p[i] = Node{ scaled.p[i].x * (-200) + 400, scaled.p[i].y * (-200) + 400, scaled.p[i].z };
+				}
+
+				projectedTris.push_back(tempTriangle);
+			}
 		}
-
-		projectedTris.push_back(tempTriangle);
 	}
+
+	std::sort(projectedTris.begin(), projectedTris.end(), [](Triangle& tri1, Triangle& tri2)
+			  {
+				  float z1 = tri1.p[0].z + tri1.p[1].z + tri1.p[2].z;
+				  float z2 = tri2.p[0].z + tri2.p[1].z + tri2.p[2].z;
+				  return z1 > z2;
+			  });
+
 	return projectedTris;
 
 }

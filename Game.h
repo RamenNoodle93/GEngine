@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <algorithm>
 
 #include "Types.h"
 #include "Tools.h"
@@ -22,7 +23,7 @@ private:
 public:
 	Game(float aspectRatio, float zNear = 0.1f, float zFar = 1000.0f, float fov = 90.0f);
 	~Game();
-	Mat4x4 GetProj();
-	std::vector<Triangle2D> Update();
+	std::vector<Triangle> Update();
+	PositionData objPos;
 };
 

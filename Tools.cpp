@@ -8,34 +8,100 @@ Tools::~Tools()
 {
 }
 
-void Tools::MultiplyMatrixVector(Node& i, Node& o, Mat4x4& m)
+void Tools::MultiplyMatrixVector(Node& in, Node& out, Mat4x4& mat)
 {
-	o.x = i.x * m.m[0][0] + i.y * m.m[1][0] + i.z * m.m[2][0] + m.m[3][0];
-	o.y = i.x * m.m[0][1] + i.y * m.m[1][1] + i.z * m.m[2][1] + m.m[3][1];
-	o.z = i.x * m.m[0][2] + i.y * m.m[1][2] + i.z * m.m[2][2] + m.m[3][2];
-	float w = i.x * m.m[0][3] + i.y * m.m[1][3] + i.z * m.m[2][3] + m.m[3][3];
-
-	if (w != 0.0f)
-	{
-		o.x /= w;
-		o.y /= w;
-		o.z /= w;
-	}
+	out.x = in.x * mat.m[0][0] + in.y * mat.m[1][0] + in.z * mat.m[2][0] + mat.m[3][0];
+	out.y = in.x * mat.m[0][1] + in.y * mat.m[1][1] + in.z * mat.m[2][1] + mat.m[3][1];
+	out.z = in.x * mat.m[0][2] + in.y * mat.m[1][2] + in.z * mat.m[2][2] + mat.m[3][2];
+	out.w = in.x * mat.m[0][3] + in.y * mat.m[1][3] + in.z * mat.m[2][3] + mat.m[3][3];
 }
 
-Node Tools::AddVectors(Node& vec1, Node& vec2)
+void Tools::CalculateNormal(Triangle& in, Node& out)
 {
-	Node added;
-	added.x = vec1.x + vec2.x;
-	added.y = vec1.y + vec2.y;
-	added.z = vec1.z + vec2.z;
-	return added;
+	Node vec1, vec2;
+
+	vec1.x = in.p[1].x - in.p[0].x;
+	vec1.y = in.p[1].y - in.p[0].y;
+	vec1.z = in.p[1].z - in.p[0].z;
+
+	vec2.x = in.p[2].x - in.p[0].x;
+	vec2.y = in.p[2].y - in.p[0].y;
+	vec2.z = in.p[2].z - in.p[0].z;
+
+	out.x = vec1.y * vec2.z - vec1.z * vec2.y;
+	out.y = vec1.z * vec2.x - vec1.x * vec2.z;
+	out.z = vec1.x * vec2.y - vec1.y * vec2.x;
 }
 
-//Node Tools::CalculateNormal(Triangle& triangle)
-//{
-//
-//}
+void Tools::TranslateTriangle(Triangle& in, Node& pos, Triangle& out)
+{
+	AddVectors(pos, in.p[0], out.p[0]);
+	AddVectors(pos, in.p[1], out.p[1]);
+	AddVectors(pos, in.p[2], out.p[2]);
+}
+
+void Tools::MatrixMultiplyTriangle(Triangle& in, Mat4x4& matrix, Triangle& out)
+{
+	Tools::MultiplyMatrixVector(in.p[0], out.p[0], matrix);
+	Tools::MultiplyMatrixVector(in.p[1], out.p[1], matrix);
+	Tools::MultiplyMatrixVector(in.p[2], out.p[2], matrix);
+}
+
+Mat4x4 Tools::GetProjectionMatrix(float aspectRatio, float fov, float zFar, float zNear)
+{
+	float fovTan = 1.0f / tanf(fov * 0.5f);
+
+	Mat4x4 projMat;
+
+	projMat.m[0][0] = aspectRatio * fovTan;
+	projMat.m[1][1] = fovTan;
+	projMat.m[2][2] = zFar / (zFar - zNear);
+	projMat.m[3][2] = (-zFar * zNear) / (zFar - zNear);
+	projMat.m[2][3] = 1.0f;
+	projMat.m[3][3] = 0.0f;
+	return projMat;
+}
+
+void Tools::AddVectors(Node& vec1, Node& vec2, Node& out)
+{
+	out.x = vec1.x + vec2.x;
+	out.y = vec1.y + vec2.y;
+	out.z = vec1.z + vec2.z;
+}
+
+void Tools::SubtractVectors(Node& vec1, Node& vec2, Node& out)
+{
+	out.x = vec1.x - vec2.x;
+	out.y = vec1.y - vec2.y;
+	out.z = vec1.z - vec2.z;
+}
+
+void Tools::NormalizeVector(Node& vec, Node& out)
+{
+	float l = sqrtf(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+	out.x = vec.x / l;
+	out.y = vec.y / l;
+	out.z = vec.z / l;
+}
+
+void Tools::DivideVector(Node& vec, float scale, Node& out)
+{
+	out.x = vec.x / scale;
+	out.y = vec.y / scale;
+	out.z = vec.z / scale;
+}
+
+void Tools::MultiplyVector(Node& vec, float scale, Node& out)
+{
+	out.x = vec.x * scale;
+	out.y = vec.y * scale;
+	out.z = vec.z * scale;
+}
+
+float Tools::DotProduct(Node& first, Node& second)
+{
+	return first.x * second.x + first.y * second.y + first.z * second.z;
+}
 
 Mat4x4 Tools::Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2)
 {
@@ -48,6 +114,18 @@ Mat4x4 Tools::Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2)
 		}
 	}
 	return multiplied;
+}
+
+Mat4x4 Tools::GetWorldMatrix(float rotationX, float rotationY, float rotationZ)
+{
+	Mat4x4 temp, rotX, rotY, rotZ;
+	rotX = Tools::GetRotationMatrixX(rotationX);
+	rotY = Tools::GetRotationMatrixY(rotationY);
+	rotZ = Tools::GetRotationMatrixZ(rotationZ);
+
+	temp = Tools::Mulitply4x4Matrices(rotY, rotZ);
+
+	return Tools::Mulitply4x4Matrices(rotX, temp);
 }
 
 Mat4x4 Tools::GetRotationMatrixX(float rotationX)
@@ -87,4 +165,94 @@ Mat4x4 Tools::GetRotationMatrixZ(float rotationZ)
 	rotationMatZ.m[3][3] = 1.0f;
 
 	return rotationMatZ;
+}
+
+Node Tools::VectorPlaneIntersect(Node& planeVector, Node& planeNormal, Node& lineStart, Node& lineEnd)
+{
+	NormalizeVector(planeNormal, planeNormal);
+
+	float dInter = -DotProduct(planeNormal, planeVector);
+	float ad = DotProduct(lineStart, planeNormal);
+	float bd = DotProduct(lineEnd, planeNormal);
+	float t = (-dInter - ad) / (bd - ad);
+
+	Node lineStartToEnd;
+	SubtractVectors(lineEnd, lineStart, lineStartToEnd);
+
+	Node lineToIntersect;
+	MultiplyVector(lineStartToEnd, t, lineToIntersect);
+
+	Node finalVal;
+	AddVectors(lineStart, lineToIntersect, finalVal);
+
+	return finalVal;
+}
+
+int Tools::ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangle& out1, Triangle& out2)
+{
+	NormalizeVector(planeNormal, planeNormal);
+
+	//Najkrotszy dystans od punktu do plaszczyzny
+	auto dist = [&](Node& p)
+		{
+			Node node;
+			NormalizeVector(p, node);
+			return (planeNormal.x * p.x + planeNormal.y * p.y + planeNormal.z * p.z - DotProduct(planeNormal, planeVec));
+		};
+
+	//Dystans wiekszy od 0 oznacza, ze punkt lezy 'wewnatrz' plaszczyzny
+
+	Node* insidePoints[3];  int nInsidePointCount = 0;
+	Node* outsidePoints[3]; int nOutsidePointCount = 0;
+
+	//Dystans kazdego punktu do plaszczyzny
+	float d0 = dist(in.p[0]);
+	float d1 = dist(in.p[1]);
+	float d2 = dist(in.p[2]);
+
+	if (d0 >= 0) { insidePoints[nInsidePointCount++] = &in.p[0]; }
+	else { outsidePoints[nOutsidePointCount++] = &in.p[0]; }
+	if (d1 >= 0) { insidePoints[nInsidePointCount++] = &in.p[1]; }
+	else { outsidePoints[nOutsidePointCount++] = &in.p[1]; }
+	if (d2 >= 0) { insidePoints[nInsidePointCount++] = &in.p[2]; }
+	else { outsidePoints[nOutsidePointCount++] = &in.p[2]; }
+
+	if (nInsidePointCount == 0)
+	{
+		//Caly trojkat jest poza plaszczyzna, czyli nie trzeba go rysowac
+		return 0;
+	}
+
+	if (nInsidePointCount == 3)
+	{
+		//Caly trojkat jest 'w plaszczyznie', czyli nie trzeba go przycinac
+		out1 = in;
+		return 1;
+	}
+
+	if (nInsidePointCount == 1 && nOutsidePointCount == 2)
+	{
+		out1.p[0] = *insidePoints[0];
+
+		//Obliczanie wspolrzednych przeciecia dwoch pozostalych punktow z plaszczyzna
+		out1.p[1] = VectorPlaneIntersect(planeVec, planeNormal, *insidePoints[0], *outsidePoints[0]);
+		out1.p[2] = VectorPlaneIntersect(planeVec, planeNormal, *insidePoints[0], *outsidePoints[1]);
+
+		return 1;
+	}
+
+	if (nInsidePointCount == 2 && nOutsidePointCount == 1)
+	{
+		//Nalezy stworzyc dwa nowe trojkaty
+
+		out1.p[0] = *insidePoints[0];
+		out1.p[1] = *insidePoints[1];
+		out1.p[2] = VectorPlaneIntersect(planeVec, planeNormal, *insidePoints[0], *outsidePoints[0]);
+
+		out2.p[0] = *insidePoints[1];
+		out2.p[1] = out1.p[2];
+		out2.p[2] = VectorPlaneIntersect(planeVec, planeNormal, *insidePoints[1], *outsidePoints[0]);
+
+		return 2;
+	}
 }

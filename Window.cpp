@@ -36,9 +36,6 @@ HWND Window::Create(HINSTANCE hInstance, int width, int height)
 	HWND windowhandle = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, L"MainWindow", L"MyGame", windowStyle, 100, 100, rect.right - rect.left, rect.bottom - rect.top, NULL, NULL, hInstance, 0);
 
 
-
-
-
 	graphics->Init(windowhandle);
 
 	return windowhandle;
