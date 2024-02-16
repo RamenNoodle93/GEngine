@@ -4,30 +4,62 @@
 #include <string>
 #include <fstream>
 #include <strstream>
+#include <stdint.h>
 
 #define PI 3.14159265358979323846
 
-struct Node {
+//Liczby calkowite bez znaku
+using u8 = uint8_t;
+using u16 = uint16_t;
+using u32 = uint32_t;
+using u64 = uint64_t;
+
+//Liczby calkowite
+using s8 = int8_t;
+using s16 = int16_t;
+using s32 = int32_t;
+using s64 = int64_t;
+
+using idType = u32;
+
+constexpr u32 indexSize{ 16 };
+constexpr u32 generationSize{ sizeof(idType) * 8 - indexSize };
+
+constexpr idType indexMask{ (idType { 1 } << indexSize) - 1 };
+constexpr idType generationMask{ ~((idType { 1 } << generationSize) - 1) };
+
+struct Object
+{
+	idType meshId;
+	//PositionData location;
+};
+
+struct Node
+{
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
 	float w = 1.0f;
 };
 
-struct Point {
+struct Point
+{
 	float x, y;
 };
 
-struct PositionData {
+struct PositionData
+{
 	Node rotation;
 	Node position;
 };
 
-struct Triangle {
+struct Triangle
+{
 	Node p[3];
 };
 
-struct Triangle2D {
+struct Triangle2D
+{
 	Point p[3];
 };
 
@@ -76,6 +108,7 @@ struct Mesh
 
 };
 
-struct Mat4x4 {
+struct Mat4x4
+{
 	float m[4][4] = { 0.0f };
 };

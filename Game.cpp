@@ -11,7 +11,7 @@ Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 
 	Node pos;
 	pos.x = 0.0f;
-	pos.y = 1.0f;
+	pos.y = -1.0f;
 	pos.z = 0.0f;
 
 	Node rot;
@@ -37,7 +37,7 @@ Game::~Game()
 std::vector<Triangle> Game::Update()
 {
 	objPos.rotation.y += 0.01;
-
+	camera.position.z -= 0.03;
 	Mat4x4 proj = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
 	std::vector<Triangle> projectedTris;
@@ -45,6 +45,12 @@ std::vector<Triangle> Game::Update()
 	Mesh loadedObj;
 
 	loadedObj.LoadFromObjectFile("teapot.obj");
+
+	Mat4x4 worldMatrixObject, worldMatrixCamera;
+
+	worldMatrixObject = Tools::GetWorldMatrix(objPos.rotation.x, objPos.rotation.y, objPos.rotation.z);
+
+	worldMatrixCamera = Tools::GetWorldMatrix(camera.rotation.x, camera.rotation.y, camera.rotation.z);
 
 	for (auto& tri : loadedObj.tris)
 	{
@@ -56,59 +62,54 @@ std::vector<Triangle> Game::Update()
 
 		Triangle rotatedSelf, rotatedOrigin, translated, projected, tempTriangle;
 
-		Mat4x4 worldMatrix;
-
 		//Obracanie obiektu wokol samego siebie
-		worldMatrix = Tools::GetWorldMatrix(objPos.rotation.x, objPos.rotation.y, objPos.rotation.z);
+		Tools::MatrixMultiplyTriangle(tri, worldMatrixObject, rotatedSelf);
 
-		Tools::MatrixMultiplyTriangle(tri, worldMatrix, rotatedSelf);
-
+		//Przesuwanie obiektu w swiecie
 		Tools::TranslateTriangle(rotatedSelf, relativePosition, translated);
 
 		//Obracanie obiektu wokol kamery
-		worldMatrix = Tools::GetWorldMatrix(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+		Tools::MatrixMultiplyTriangle(translated, worldMatrixCamera, rotatedOrigin);
 
-		Tools::MatrixMultiplyTriangle(translated, worldMatrix, rotatedOrigin);
-
-		Tools::CalculateNormal(rotatedOrigin, faceNormal);
+		/*Tools::CalculateNormal(rotatedOrigin, faceNormal);
 		Tools::NormalizeVector(faceNormal, faceNormal);
 
 		temp.x = rotatedOrigin.p[0].x - camera.position.x;
 		temp.y = rotatedOrigin.p[0].y - camera.position.y;
-		temp.z = rotatedOrigin.p[0].z - camera.position.z;
+		temp.z = rotatedOrigin.p[0].z - camera.position.z;*/
 
-		//Sprawdzanie czy trojkat jest widoczny
+		//Sprawdzanie czy trojkat jest widoczny (obecnie wylaczone)
 
-		if (Tools::DotProduct(faceNormal, temp) < 0.0f)
+		//if (Tools::DotProduct(faceNormal, temp) < 0.0f)
+		//{
+
+		int nClippedTriangles = 0;
+		Triangle clipped[2];
+		Node planeVec, planeNormal;
+
+		planeVec = { 0.0f, 0.0f, 0.1f };
+		planeNormal = { 0.0f, 0.0f, 0.1f };
+
+		nClippedTriangles = Tools::ClipTriangle(planeVec, planeNormal, rotatedOrigin, clipped[0], clipped[1]);
+
+		// We may end up with multiple triangles form the clip, so project as
+		// required
+		for (int n = 0; n < nClippedTriangles; n++)
 		{
+			Triangle scaled;
+			Tools::MatrixMultiplyTriangle(clipped[n], projMat, projected);
 
-			int nClippedTriangles = 0;
-			Triangle clipped[2];
-			Node planeVec, planeNormal;
+			Tools::DivideVector(projected.p[0], projected.p[0].w, scaled.p[0]);
+			Tools::DivideVector(projected.p[1], projected.p[1].w, scaled.p[1]);
+			Tools::DivideVector(projected.p[2], projected.p[2].w, scaled.p[2]);
 
-			planeVec = { 0.0f, 0.0f, 0.1f };
-			planeNormal = { 0.0f, 0.0f, 0.1f };
-
-			nClippedTriangles = Tools::ClipTriangle(planeVec, planeNormal, rotatedOrigin, clipped[0], clipped[1]);
-
-			// We may end up with multiple triangles form the clip, so project as
-			// required
-			for (int n = 0; n < nClippedTriangles; n++)
-			{
-				Triangle scaled;
-				Tools::MatrixMultiplyTriangle(clipped[n], projMat, projected);
-
-				Tools::DivideVector(projected.p[0], projected.p[0].w, scaled.p[0]);
-				Tools::DivideVector(projected.p[1], projected.p[1].w, scaled.p[1]);
-				Tools::DivideVector(projected.p[2], projected.p[2].w, scaled.p[2]);
-
-				for (int i = 0; i < 3; i++) {
-					tempTriangle.p[i] = Node{ scaled.p[i].x * (-200) + 400, scaled.p[i].y * (-200) + 400, scaled.p[i].z };
-				}
-
-				projectedTris.push_back(tempTriangle);
+			for (int i = 0; i < 3; i++) {
+				tempTriangle.p[i] = Node{ scaled.p[i].x * (-200) + 400, scaled.p[i].y * (-200) + 400, scaled.p[i].z };
 			}
+
+			projectedTris.push_back(tempTriangle);
 		}
+		//}
 	}
 
 	std::sort(projectedTris.begin(), projectedTris.end(), [](Triangle& tri1, Triangle& tri2)

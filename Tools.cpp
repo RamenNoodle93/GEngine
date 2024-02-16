@@ -8,6 +8,21 @@ Tools::~Tools()
 {
 }
 
+idType Tools::GetIndex(idType id)
+{
+	return id & indexMask;
+}
+
+idType Tools::GetGeneration(idType id)
+{
+	return (id & generationMask) >> generationSize;
+}
+
+idType Tools::ConstructId(int index, int generation)
+{
+	return (generation << generationSize) + index;
+}
+
 void Tools::MultiplyMatrixVector(Node& in, Node& out, Mat4x4& mat)
 {
 	out.x = in.x * mat.m[0][0] + in.y * mat.m[1][0] + in.z * mat.m[2][0] + mat.m[3][0];
@@ -197,7 +212,7 @@ int Tools::ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangl
 		{
 			Node node;
 			NormalizeVector(p, node);
-			return (planeNormal.x * p.x + planeNormal.y * p.y + planeNormal.z * p.z - DotProduct(planeNormal, planeVec));
+			return (planeNormal.x * node.x + planeNormal.y * node.y + planeNormal.z * node.z - DotProduct(planeNormal, planeVec));
 		};
 
 	//Dystans wiekszy od 0 oznacza, ze punkt lezy 'wewnatrz' plaszczyzny

@@ -8,6 +8,10 @@ public:
 	Tools();
 	~Tools();
 
+	idType GetIndex(idType id);
+	idType GetGeneration(idType id);
+	idType ConstructId(int index, int generation);
+
 	static void AddVectors(Node& vec1, Node& vec2, Node& out);
 	static void SubtractVectors(Node& vec1, Node& vec2, Node& out);
 	static void NormalizeVector(Node& vec, Node& out);
