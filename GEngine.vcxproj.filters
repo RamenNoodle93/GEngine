@@ -17,6 +17,9 @@
     <Filter Include="Engine\Tools">
       <UniqueIdentifier>{9731af23-8824-4fd9-910e-fabfbc64a4d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Instance">
+      <UniqueIdentifier>{9a0c14b0-d1eb-4694-8855-21e55325199d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Private\main.cpp">
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="Private\Tools\Source\Tools.cpp">
       <Filter>Engine\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Public\Scripts\Script.cpp">
+      <Filter>Instance</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="Private\Tools\CommonHeaders.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scripts\Script.h">
+      <Filter>Instance</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

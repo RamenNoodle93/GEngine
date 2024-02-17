@@ -54,9 +54,9 @@
       <AdditionalOptions>/D _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\Private\SFML-2.6.1\bin;.\Private\SFML-2.6.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\Private\SFML-2.6.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-audio.lib;sfml-system.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -73,11 +73,11 @@
       <AdditionalOptions>/D _SILENCE_CXX17_STRSTREAM_DEPRECATION_WARNING %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\Private\SFML-2.6.1\bin;.\Private\SFML-2.6.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\Private\SFML-2.6.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-audio.lib;sfml-system.lib;sfml-main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -85,12 +85,14 @@
     <ClCompile Include="Private\main.cpp" />
     <ClCompile Include="Private\Tools\Source\Game.cpp" />
     <ClCompile Include="Private\Tools\Source\Tools.cpp" />
+    <ClCompile Include="Public\Scripts\Script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Private\Tools\CommonHeaders.h" />
     <ClInclude Include="Private\Tools\Include\Game.h" />
     <ClInclude Include="Private\Tools\Include\Tools.h" />
     <ClInclude Include="Private\Tools\Include\Types.h" />
+    <ClInclude Include="Public\Scripts\Script.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

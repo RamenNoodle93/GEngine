@@ -12,12 +12,13 @@ private:
 	float zFar;
 	float fov;
 	float aspectRatio;
-	float fovTan;
 	PositionData camera;
 	Mat4x4 projMat;
 	Mat4x4 rotationMatX;
 	Mat4x4 rotationMatY;
 	Mat4x4 rotationMatZ;
+
+	Mesh meshes[4096];
 
 public:
 	Game(float aspectRatio, float zNear = 0.1f, float zFar = 1000.0f, float fov = 90.0f);

@@ -6,6 +6,8 @@
 #include <strstream>
 #include <stdint.h>
 
+#include <iostream>
+
 //Liczby calkowite bez znaku
 using u8 = uint8_t;
 using u16 = uint16_t;
@@ -68,9 +70,13 @@ struct Mesh
 	bool LoadFromObjectFile(std::string sFilename)
 	{
 
+		std::cout << "trying..." << '\n';
+
 		std::ifstream file(sFilename);
 		if (!file.is_open())
 			return false;
+
+		std::cout << "openedfile" << '\n';
 
 		//Tymczasowy zbiór punktów
 		std::vector<Node> vertices;

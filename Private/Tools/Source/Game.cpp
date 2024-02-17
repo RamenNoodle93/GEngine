@@ -1,5 +1,7 @@
 #include "../Include/Game.h"
 
+//#include "../../../Public/Resources/"
+
 Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 {
 	//Dane startowe
@@ -27,6 +29,12 @@ Game::Game(float aspectRatio, float zNear, float zFar, float fov)
 
 	projMat = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
+	Mesh loadedObj;
+
+	loadedObj.LoadFromObjectFile("./Public/Resources/teapot.obj");
+
+	meshes[0] = loadedObj;
+
 }
 
 Game::~Game()
@@ -37,20 +45,20 @@ Game::~Game()
 std::vector<Triangle> Game::Update()
 {
 	objPos.rotation.y += 0.01;
-	camera.position.z -= 0.03;
+	//camera.position.z -= 0.03;
 	Mat4x4 proj = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
 	std::vector<Triangle> projectedTris;
 
-	Mesh loadedObj;
-
-	loadedObj.LoadFromObjectFile("teapot.obj");
+	Mesh loadedObj = meshes[0];
 
 	Mat4x4 worldMatrixObject, worldMatrixCamera;
 
 	worldMatrixObject = Tools::GetWorldMatrix(objPos.rotation.x, objPos.rotation.y, objPos.rotation.z);
 
 	worldMatrixCamera = Tools::GetWorldMatrix(camera.rotation.x, camera.rotation.y, camera.rotation.z);
+
+	//std::cout << loadedObj.tris.size() << '\n';
 
 	for (auto& tri : loadedObj.tris)
 	{
