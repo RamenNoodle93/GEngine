@@ -9,17 +9,21 @@ Window::Window()
 
 	object2d trifirst;
 
-	trifirst.vertices.push_back(Point{ -0.5, -0.5 });
-	trifirst.vertices.push_back(Point{ 0.5, -0.5 });
-	trifirst.vertices.push_back(Point{ 0.0, 0.5 });
+	trifirst.points.push_back(Point{ -0.5, -0.5 });
+	trifirst.points.push_back(Point{ 0.5, -0.5 });
+	trifirst.points.push_back(Point{ 0.0, 0.5 });
+
+	trifirst.vertices.resize(3);
 
 	trifirst.posData = { Point{0,0.5}, 0 };
 
 	object2d trisecond;
 
-	trisecond.vertices.push_back(Point{ -0.5, -0.5 });
-	trisecond.vertices.push_back(Point{ 0.5, -0.5 });
-	trisecond.vertices.push_back(Point{ 0.0, 0.5 });
+	trisecond.points.push_back(Point{ -0.5, -0.5 });
+	trisecond.points.push_back(Point{ 0.5, -0.5 });
+	trisecond.points.push_back(Point{ 0.0, 0.5 });
+
+	trisecond.vertices.resize(3);
 
 	trisecond.posData = { Point{2,0}, 0 };
 
@@ -73,6 +77,14 @@ void Window::Render()
 
 	objects[0].posData.position.x += 0.01;
 
+	for (auto& obj : objects)
+	{
+		for (int i = 0; i < obj.points.size(); i++)
+		{
+			obj.vertices[i] = { obj.points[i].x + obj.posData.position.x, obj.points[i].y + obj.posData.position.y };
+		}
+	}
+
 	for (int i = 0; i < objects.size(); i++)
 	{
 		for (int j = 0; j < objects.size(); j++)
@@ -81,7 +93,7 @@ void Window::Render()
 				if (Tools::SATcollision(objects[i], objects[j]))
 					graphics->DrawLine(0, 400, 800, 400, 3, 0, 1, 0, 1);
 		}
-		graphics->DrawTriangle((objects[i].vertices[0].x + objects[i].posData.position.x) * 50 + 400, (objects[i].vertices[0].y + objects[i].posData.position.y) * 50 + 400, (objects[i].vertices[1].x + objects[i].posData.position.x) * 50 + 400, (objects[i].vertices[1].y + objects[i].posData.position.y) * 50 + 400, (objects[i].vertices[2].x + objects[i].posData.position.x) * 50 + 400, (objects[i].vertices[2].y + objects[i].posData.position.y) * 50 + 400, 2, 1.0, 0.0, 0.0, 1.0);
+		graphics->DrawTriangle((objects[i].vertices[0].x) * 50 + 400, (objects[i].vertices[0].y) * 50 + 400, (objects[i].vertices[1].x) * 50 + 400, (objects[i].vertices[1].y) * 50 + 400, (objects[i].vertices[2].x) * 50 + 400, (objects[i].vertices[2].y) * 50 + 400, 2, 1.0, 0.0, 0.0, 1.0);
 	}
 
 	//for (auto& object : objects)

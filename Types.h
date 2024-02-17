@@ -5,6 +5,7 @@
 #include <fstream>
 #include <strstream>
 #include <stdint.h>
+#include <algorithm>
 
 #define PI 3.14159265358979323846
 
@@ -52,7 +53,8 @@ struct Pos2D
 struct object2d
 {
 	float size = 0.5;
-	std::vector<Point> vertices;
+	std::vector<Point> points;
+	std::vector<Point> vertices; //translated
 	Pos2D posData;
 };
 

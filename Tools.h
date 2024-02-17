@@ -8,6 +8,8 @@ public:
 	Tools();
 	~Tools();
 
+	static bool ShapeOverlap_SAT(object2d& r1, object2d& r2);
+
 	idType GetIndex(idType id);
 	idType GetGeneration(idType id);
 	idType ConstructId(int index, int generation);
@@ -40,7 +42,6 @@ public:
 	static void MatrixMultiplyTriangle(Triangle& in, Mat4x4& matrix, Triangle& out);
 
 	static Mat4x4 GetProjectionMatrix(float aspectRatio, float fov, float zFar, float zNear);
-
 	static Mat4x4 GetWorldMatrix(float rotationX, float rotationY, float rotationZ);
 	static Mat4x4 GetRotationMatrixX(float rotationX);
 	static Mat4x4 GetRotationMatrixY(float rotationY);

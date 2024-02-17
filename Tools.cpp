@@ -11,6 +11,54 @@ Tools::~Tools()
 {
 }
 
+bool Tools::ShapeOverlap_SAT(object2d& r1, object2d& r2)
+{
+	object2d* poly1 = &r1;
+	object2d* poly2 = &r2;
+
+	for (int shape = 0; shape < 2; shape++)
+	{
+		if (shape == 1)
+		{
+			poly1 = &r2;
+			poly2 = &r1;
+		}
+
+		for (int a = 0; a < poly1->vertices.size(); a++)
+		{
+			int b = (a + 1) % poly1->vertices.size();
+			Point axisProj = { -(poly1->vertices[b].y - poly1->vertices[a].y), poly1->vertices[b].x - poly1->vertices[a].x };
+			float d = sqrtf(axisProj.x * axisProj.x + axisProj.y * axisProj.y);
+			axisProj = { axisProj.x / d, axisProj.y / d };
+
+			// Work out min and max 1D points for r1
+			float min_r1 = INFINITY, max_r1 = -INFINITY;
+			for (int p = 0; p < poly1->vertices.size(); p++)
+			{
+				float q = (poly1->vertices[p].x * axisProj.x + poly1->vertices[p].y * axisProj.y);
+				min_r1 = min(min_r1, q);
+				max_r1 = max(max_r1, q);
+			}
+
+			// Work out min and max 1D points for r2
+			float min_r2 = INFINITY, max_r2 = -INFINITY;
+			for (int p = 0; p < poly2->vertices.size(); p++)
+			{
+				float q = (poly2->vertices[p].x * axisProj.x + poly2->vertices[p].y * axisProj.y);
+				min_r2 = min(min_r2, q);
+				max_r2 = max(max_r2, q);
+			}
+
+			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
+				return false;
+		}
+	}
+
+	return true;
+}
+
+
+
 idType Tools::GetIndex(idType id)
 {
 	return id & indexMask;
