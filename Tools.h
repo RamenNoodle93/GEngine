@@ -22,6 +22,18 @@ public:
 
 	static float DotProduct(Node& first, Node& second);
 
+	static bool CheckCollision(object2d& obj1, object2d& obj2);
+
+	static std::vector<Point> GetAxes(object2d& obj);
+	static Point GetPerpendicular(Point vect);
+	static Point GetNormalVec2D(Point vect);
+
+	static bool SATcollision(object2d& obj1, object2d& obj2);
+
+	static Projection Project(Point& axis, object2d& obj);
+
+	static bool Overlap(Projection& p1, Projection& p2);
+
 	static void MultiplyMatrixVector(Node& in, Node& out, Mat4x4& matrix);
 	static void CalculateNormal(Triangle& in, Node& out);
 	static void TranslateTriangle(Triangle& in, Node& pos, Triangle& out);

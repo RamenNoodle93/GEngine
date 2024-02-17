@@ -14,6 +14,10 @@ private:
 	float fov;
 	float aspectRatio;
 	float fovTan;
+
+	Object objects;
+
+
 	PositionData camera;
 	Mat4x4 projMat;
 	Mat4x4 rotationMatX;

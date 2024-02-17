@@ -1,5 +1,8 @@
 #include "Tools.h"
 
+#include <iostream>
+#include <Windows.h>
+
 Tools::Tools()
 {
 }
@@ -116,6 +119,77 @@ void Tools::MultiplyVector(Node& vec, float scale, Node& out)
 float Tools::DotProduct(Node& first, Node& second)
 {
 	return first.x * second.x + first.y * second.y + first.z * second.z;
+}
+
+bool Tools::CheckCollision(object2d& obj1, object2d& obj2)
+{
+	float distance = pow(obj1.posData.position.x - obj2.posData.position.x, 2) + pow(obj1.posData.position.y - obj2.posData.position.y, 2);
+
+	//bool collisionX = abs(obj1.posData.position.x - obj2.posData.position.x) * 2 < (obj1.size + obj2.size);
+	//bool collisionY = abs(obj1.posData.position.y - obj2.posData.position.y) * 2 < (obj1.size + obj2.size);
+
+	//return collisionX && collisionY;
+
+	return sqrt(distance) < obj1.size + obj2.size;
+}
+
+std::vector<Point> Tools::GetAxes(object2d& obj)
+{
+	std::vector<Point> axes;
+	for (size_t i = 0; i < obj.vertices.size(); ++i) {
+		Point edge = { obj.vertices[(i + 1) % obj.vertices.size()].x - obj.vertices[i].x, obj.vertices[(i + 1) % obj.vertices.size()].y - obj.vertices[i].y };
+		axes.push_back(GetNormalVec2D(GetPerpendicular(edge)));
+	}
+	return axes;
+
+}
+
+Point Tools::GetPerpendicular(Point vect)
+{
+	return Point{ -vect.y, vect.x };
+}
+
+Point Tools::GetNormalVec2D(Point vect)
+{
+	float l = std::sqrt(vect.x * vect.x + vect.y * vect.y);
+	return Point{ vect.x / l, vect.y / l };
+}
+
+bool Tools::SATcollision(object2d& obj1, object2d& obj2)
+{
+	std::vector<Point> axes1 = GetAxes(obj1);
+	std::vector<Point> axes2 = GetAxes(obj2);
+
+	for (Point& axis : axes1) {
+		Projection p1 = Project(axis, obj1);
+		Projection p2 = Project(axis, obj2);
+		if (!Overlap(p1, p2)) return false;
+	}
+
+	for (Point& axis : axes2) {
+		Projection p1 = Project(axis, obj1);
+		Projection p2 = Project(axis, obj2);
+		if (!Overlap(p1, p2)) return false;
+	}
+
+	return true;
+}
+
+Projection Tools::Project(Point& axis, object2d& obj)
+{
+	float min = axis.x * obj.vertices[0].x + axis.y * obj.vertices[0].y;
+	float max = min;
+	for (const Point& vert : obj.vertices) {
+		float p = axis.x * vert.x + axis.y * vert.y;;
+		if (p < min) min = p;
+		else if (p > max) max = p;
+	}
+	return { min, max };
+}
+
+bool Tools::Overlap(Projection& p1, Projection& p2)
+{
+	return !(p1.max < p2.min || p2.max < p1.min);
 }
 
 Mat4x4 Tools::Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2)

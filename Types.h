@@ -28,10 +28,32 @@ constexpr u32 generationSize{ sizeof(idType) * 8 - indexSize };
 constexpr idType indexMask{ (idType { 1 } << indexSize) - 1 };
 constexpr idType generationMask{ ~((idType { 1 } << generationSize) - 1) };
 
+struct Projection {
+	float min, max;
+};
+
 struct Object
 {
 	idType meshId;
 	//PositionData location;
+};
+
+struct Point
+{
+	float x, y;
+};
+
+struct Pos2D
+{
+	Point position;
+	float rotation;
+};
+
+struct object2d
+{
+	float size = 0.5;
+	std::vector<Point> vertices;
+	Pos2D posData;
 };
 
 struct Node
@@ -42,10 +64,7 @@ struct Node
 	float w = 1.0f;
 };
 
-struct Point
-{
-	float x, y;
-};
+
 
 struct PositionData
 {
@@ -66,6 +85,8 @@ struct Triangle2D
 struct Mesh
 {
 	std::vector<Triangle> tris;
+
+	std::vector<Point> collisionMesh;
 
 	bool LoadFromObjectFile(std::string sFilename)
 	{

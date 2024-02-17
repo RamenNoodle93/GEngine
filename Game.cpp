@@ -37,14 +37,15 @@ Game::~Game()
 std::vector<Triangle> Game::Update()
 {
 	objPos.rotation.y += 0.01;
-	camera.position.z -= 0.03;
+	objPos.position.y = cos(objPos.rotation.y);
+	camera.position.z -= 0.00;
 	Mat4x4 proj = Tools::GetProjectionMatrix(Game::aspectRatio, Game::fov, Game::zFar, Game::zNear);
 
 	std::vector<Triangle> projectedTris;
 
 	Mesh loadedObj;
 
-	loadedObj.LoadFromObjectFile("teapot.obj");
+	loadedObj.LoadFromObjectFile("ufo.obj");
 
 	Mat4x4 worldMatrixObject, worldMatrixCamera;
 
@@ -71,12 +72,12 @@ std::vector<Triangle> Game::Update()
 		//Obracanie obiektu wokol kamery
 		Tools::MatrixMultiplyTriangle(translated, worldMatrixCamera, rotatedOrigin);
 
-		/*Tools::CalculateNormal(rotatedOrigin, faceNormal);
-		Tools::NormalizeVector(faceNormal, faceNormal);
+		//Tools::CalculateNormal(rotatedOrigin, faceNormal);
+		//Tools::NormalizeVector(faceNormal, faceNormal);
 
-		temp.x = rotatedOrigin.p[0].x - camera.position.x;
-		temp.y = rotatedOrigin.p[0].y - camera.position.y;
-		temp.z = rotatedOrigin.p[0].z - camera.position.z;*/
+		//temp.x = rotatedOrigin.p[0].x - camera.position.x;
+		//temp.y = rotatedOrigin.p[0].y - camera.position.y;
+		//temp.z = rotatedOrigin.p[0].z - camera.position.z;
 
 		//Sprawdzanie czy trojkat jest widoczny (obecnie wylaczone)
 

@@ -12,6 +12,7 @@ class Window
 private:
 	HWND hWnd;
 	std::vector<Triangle> renderStack;
+	std::vector<object2d> objects;
 
 public:
 	Window();

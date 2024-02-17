@@ -74,3 +74,18 @@ void Graphics::DrawLine(float x1, float y1, float x2, float y2, float width, flo
 
 	brush->Release();
 }
+
+void Graphics::DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, float width, float r, float g, float b, float a)
+{
+	ID2D1SolidColorBrush* brush;
+	renderTarget->CreateSolidColorBrush(D2D1::ColorF(r, g, b, a), &brush);
+
+	if (brush)
+	{
+		DrawLine(x1, y1, x2, y2, width, r, g, b, a);
+		DrawLine(x2, y2, x3, y3, width, r, g, b, a);
+		DrawLine(x1, y1, x3, y3, width, r, g, b, a);
+	}
+
+	brush->Release();
+}

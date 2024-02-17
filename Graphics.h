@@ -23,5 +23,5 @@ public:
 
 	void DrawCircle(float x, float y, float width, float radius, float r, float g, float b, float a);
 	void DrawLine(float x1, float y1, float x2, float y2, float width, float r, float g, float b, float a);
-
+	void DrawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, float width, float r, float g, float b, float a);
 };
