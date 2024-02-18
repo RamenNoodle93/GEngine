@@ -6,17 +6,16 @@
 #include "Tools/Include/Game.h"
 #include "../Public/Scripts/Settings.h"
 
-Game* game;
-
 //Glowna funkcja
 int main()
 {
-	game = new Game(size.x / size.y);
+	Game game(size.x / size.y);
 
 	//Pobieranie ustawien z pliku i tworzenie okna
 
 	sf::Clock clock;
 	sf::RenderWindow window(sf::VideoMode(size.x, size.y), name);
+	GameScripts mainGame(window, game);
 
 	while (window.isOpen())
 	{
@@ -30,15 +29,15 @@ int main()
 
 		float deltaTime = clock.restart().asSeconds();
 
+		mainGame.Update(deltaTime);
 
-
-		std::vector<Projected> projected = game->Projection();
+		std::vector<Projected> projected = game.Projection();
 		window.clear(sf::Color::Black);
 
 		for (auto& obj : projected)
 		{
 
-			Tools::DrawTriangle(obj, window);
+			Tools::DrawTriangle(obj, window, true);
 
 		}
 		window.display();

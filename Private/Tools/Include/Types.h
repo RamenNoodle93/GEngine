@@ -107,14 +107,16 @@ struct Object
 {
 	idType meshId;
 	PositionData location;
-	bool entity;
-	idType type;
+	bool flat;
+	idType typeId;
+	sf::Color color;
 };
 
 struct Projected
 {
 	sf::Color color;
 	std::vector<Triangle> tris;
+	float depth;
 };
 
 struct Mat4x4

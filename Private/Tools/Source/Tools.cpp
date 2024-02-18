@@ -272,10 +272,24 @@ int Tools::ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangl
 	}
 }
 
-void Tools::DrawTriangle(Projected projection, sf::RenderWindow& window)
+void Tools::DrawTriangle(Projected projection, sf::RenderWindow& window, bool outline, bool filled, sf::Color fillColor)
 {
 	for (auto& tri : projection.tris)
 	{
+
+		if (filled)
+		{
+			sf::ConvexShape shape;
+
+			shape.setPointCount(3);
+			shape.setPoint(0, sf::Vector2f(tri.p[0].x, tri.p[0].y));
+			shape.setPoint(1, sf::Vector2f(tri.p[1].x, tri.p[1].y));
+			shape.setPoint(2, sf::Vector2f(tri.p[2].x, tri.p[2].y));
+			shape.setFillColor(fillColor);
+
+			window.draw(shape);
+		}
+
 		sf::Vertex vertices[3];
 		for (int i = 0; i < 3; i++)
 		{

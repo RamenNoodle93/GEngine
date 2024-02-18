@@ -38,6 +38,6 @@ public:
 
 	static int ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangle& out1, Triangle& out2);
 
-	static void DrawTriangle(Projected projection, sf::RenderWindow& window);
+	static void DrawTriangle(Projected projection, sf::RenderWindow& window, bool outline = true, bool filled = false, sf::Color fillColor = sf::Color(0, 0, 0, 0));
 };
 
