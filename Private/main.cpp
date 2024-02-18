@@ -21,15 +21,18 @@ int main()
 	{
 
 		sf::Event event;
+		std::vector<sf::Event> eventList;
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
+
+			eventList.push_back(event);
 		}
 
 		float deltaTime = clock.restart().asSeconds();
 
-		mainGame.Update(deltaTime);
+		mainGame.Update(deltaTime, eventList);
 
 		std::vector<Projected> projected = game.Projection();
 		window.clear(sf::Color::Black);

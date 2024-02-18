@@ -10,10 +10,10 @@ public:
 	GameScripts(sf::RenderWindow& window, Game& game);
 	~GameScripts();
 
-	void HandleEvents();
-	void Update(float deltaTime);
+	void Update(float deltaTime, std::vector<sf::Event> events);
 
 private:
 	sf::RenderWindow* window;
 	Game* game;
+	int objectTypes[4096];
 };

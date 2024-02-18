@@ -45,18 +45,13 @@ std::vector<Projected> Game::Projection()
 
 	for (int i = 0; i < objCount; i++)
 	{
-		std::cout << "Projecting object number: " << i << '\n';
-
 		Object currentObj = objects[i];
 		Mesh objMesh = meshes[currentObj.meshId];
-
-		objects[i].location.rotation.y += 0.01;
 
 		std::vector<Triangle> projectedTris;
 
 		if (!currentObj.flat)
 		{
-
 			worldMatrixObject = Tools::GetWorldMatrix(currentObj.location.rotation.x, currentObj.location.rotation.y, currentObj.location.rotation.z);
 
 			//Pozycja obiektu wzgledem kamery
@@ -134,8 +129,6 @@ std::vector<Projected> Game::Projection()
 
 		projectedObjs.push_back(Projected{ currentObj.color , projectedTris, currentObj.location.position.z });
 
-		std::cout << projectedTris.size() << '\n';
-
 	}
 
 	std::sort(projectedObjs.begin(), projectedObjs.end(), [](Projected& obj1, Projected& obj2)
@@ -154,6 +147,8 @@ idType Game::LoadNewMesh(std::string fileName) //Ladowanie siatki do tablicy 'me
 	tempMesh.LoadFromObjectFile(filePath);
 
 	meshes[meshCount] = tempMesh;
+
+	objectMeshNames.insert({ fileName, meshCount });
 
 	meshCount++;
 

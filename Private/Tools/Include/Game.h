@@ -32,5 +32,6 @@ public:
 	Object objects[16384];
 	Mesh meshes[4096];
 
+	std::map<std::string, int> objectMeshNames;
 };
 
