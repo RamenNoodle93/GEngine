@@ -85,14 +85,15 @@
     <ClCompile Include="Private\main.cpp" />
     <ClCompile Include="Private\Tools\Source\Game.cpp" />
     <ClCompile Include="Private\Tools\Source\Tools.cpp" />
-    <ClCompile Include="Public\Scripts\Script.cpp" />
+    <ClCompile Include="Public\Scripts\GameScripts.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Private\Tools\CommonHeaders.h" />
     <ClInclude Include="Private\Tools\Include\Game.h" />
     <ClInclude Include="Private\Tools\Include\Tools.h" />
     <ClInclude Include="Private\Tools\Include\Types.h" />
-    <ClInclude Include="Public\Scripts\Script.h" />
+    <ClInclude Include="Public\Scripts\GameScripts.h" />
+    <ClInclude Include="Public\Scripts\Settings.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

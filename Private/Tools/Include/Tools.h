@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.h"
+#include "../CommonHeaders.h"
 
 class Tools
 {
@@ -36,5 +37,7 @@ public:
 	static Mat4x4 Mulitply4x4Matrices(Mat4x4& mat1, Mat4x4& mat2);
 
 	static int ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangle& out1, Triangle& out2);
+
+	static void DrawTriangle(Projected projection, sf::RenderWindow& window);
 };
 

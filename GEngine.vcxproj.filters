@@ -31,7 +31,7 @@
     <ClCompile Include="Private\Tools\Source\Tools.cpp">
       <Filter>Engine\Tools</Filter>
     </ClCompile>
-    <ClCompile Include="Public\Scripts\Script.cpp">
+    <ClCompile Include="Public\Scripts\GameScripts.cpp">
       <Filter>Instance</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,7 +48,10 @@
     <ClInclude Include="Private\Tools\CommonHeaders.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Public\Scripts\Script.h">
+    <ClInclude Include="Public\Scripts\GameScripts.h">
+      <Filter>Instance</Filter>
+    </ClInclude>
+    <ClInclude Include="Public\Scripts\Settings.h">
       <Filter>Instance</Filter>
     </ClInclude>
   </ItemGroup>

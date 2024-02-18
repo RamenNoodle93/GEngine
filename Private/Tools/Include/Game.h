@@ -18,12 +18,17 @@ private:
 	Mat4x4 rotationMatY;
 	Mat4x4 rotationMatZ;
 
+	int objCount;
+	int meshCount;
+	Object objects[16384];
 	Mesh meshes[4096];
 
 public:
-	Game(float aspectRatio, float zNear = 0.1f, float zFar = 1000.0f, float fov = 90.0f);
+	Game(float aspectRatio, float zNear = 0.1f, float zFar = 1000.0f, float fov = 60.0f);
 	~Game();
-	std::vector<Triangle> Update();
-	PositionData objPos;
+	std::vector<Projected> Projection();
+	idType LoadNewMesh(std::string fileName);
+	idType AddNewObject(idType meshId, PositionData pos, bool entity, idType type);
+	idType RemoveObjectFromId(idType idToDelete);
 };
 

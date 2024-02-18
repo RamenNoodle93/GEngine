@@ -271,3 +271,28 @@ int Tools::ClipTriangle(Node& planeVec, Node& planeNormal, Triangle& in, Triangl
 		return 2;
 	}
 }
+
+void Tools::DrawTriangle(Projected projection, sf::RenderWindow& window)
+{
+	for (auto& tri : projection.tris)
+	{
+		sf::Vertex vertices[3];
+		for (int i = 0; i < 3; i++)
+		{
+			vertices[i] = sf::Vertex(sf::Vector2f(tri.p[i].x, tri.p[i].y));
+			vertices[i].color = projection.color;
+		}
+
+		for (int i = 0; i < 3; i++)
+		{
+			sf::Vertex line[2] =
+			{
+				vertices[i],
+				vertices[(i + 1) % 2]
+			};
+
+			window.draw(line, 2, sf::Lines);
+		}
+
+	}
+}

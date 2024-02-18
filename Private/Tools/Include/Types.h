@@ -5,8 +5,10 @@
 #include <fstream>
 #include <strstream>
 #include <stdint.h>
-
 #include <iostream>
+
+#include "../include/SFML/Graphics.hpp"
+
 
 //Liczby calkowite bez znaku
 using u8 = uint8_t;
@@ -27,12 +29,6 @@ constexpr u32 generationSize{ sizeof(idType) * 8 - indexSize };
 
 constexpr idType indexMask{ (idType { 1 } << indexSize) - 1 };
 constexpr idType generationMask{ ~((idType { 1 } << generationSize) - 1) };
-
-struct Object
-{
-	idType meshId;
-	//PositionData location;
-};
 
 struct Node
 {
@@ -56,11 +52,6 @@ struct PositionData
 struct Triangle
 {
 	Node p[3];
-};
-
-struct Triangle2D
-{
-	Point p[3];
 };
 
 struct Mesh
@@ -110,6 +101,20 @@ struct Mesh
 		return true;
 	}
 
+};
+
+struct Object
+{
+	idType meshId;
+	PositionData location;
+	bool entity;
+	idType type;
+};
+
+struct Projected
+{
+	sf::Color color;
+	std::vector<Triangle> tris;
 };
 
 struct Mat4x4
