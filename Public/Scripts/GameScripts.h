@@ -10,10 +10,13 @@ public:
 	GameScripts(sf::RenderWindow& window, Game& game);
 	~GameScripts();
 
-	void Update(float deltaTime, std::vector<sf::Event> events);
+	void HandleEvents(std::vector<sf::Event> events);
+	void Update(float deltaTime);
 
 private:
 	sf::RenderWindow* window;
 	Game* game;
-	int objectTypes[4096];
+	int objectTypes[256];
+	int menuSelection;
+	int stage;
 };

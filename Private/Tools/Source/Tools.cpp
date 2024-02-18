@@ -290,23 +290,78 @@ void Tools::DrawTriangle(Projected projection, sf::RenderWindow& window, bool ou
 			window.draw(shape);
 		}
 
-		sf::Vertex vertices[3];
-		for (int i = 0; i < 3; i++)
+		if (outline)
 		{
-			vertices[i] = sf::Vertex(sf::Vector2f(tri.p[i].x, tri.p[i].y));
-			vertices[i].color = projection.color;
-		}
-
-		for (int i = 0; i < 3; i++)
-		{
-			sf::Vertex line[2] =
+			sf::Vertex vertices[3];
+			for (int i = 0; i < 3; i++)
 			{
-				vertices[i],
-				vertices[(i + 1) % 2]
-			};
+				vertices[i] = sf::Vertex(sf::Vector2f(tri.p[i].x, tri.p[i].y));
+				vertices[i].color = projection.color;
+			}
 
-			window.draw(line, 2, sf::Lines);
+			for (int i = 0; i < 3; i++)
+			{
+				sf::Vertex line[2] =
+				{
+					vertices[i],
+					vertices[(i + 1) % 3]
+				};
+
+				window.draw(line, 2, sf::Lines);
+			}
+		}
+	}
+}
+
+bool Tools::ShapeOverlapSAT(Object& obj1, Object& obj2)
+{
+	CollisionObject* poly1 = &obj1.collider;
+	CollisionObject* poly2 = &obj2.collider;
+
+	for (int shape = 0; shape < 2; shape++)
+	{
+		if (shape == 1)
+		{
+			poly1 = &obj2.collider;
+			poly2 = &obj1.collider;
 		}
 
+		for (int a = 0; a < poly1->vertices.size(); a++)
+		{
+			int b = (a + 1) % poly1->vertices.size();
+			Point axisProj = { -(poly1->vertices[b].y - poly1->vertices[a].y), poly1->vertices[b].x - poly1->vertices[a].x };
+			float d = sqrtf(axisProj.x * axisProj.x + axisProj.y * axisProj.y);
+			axisProj = { axisProj.x / d, axisProj.y / d };
+
+			// Work out min and max 1D points for r1
+			float min_r1 = INFINITY, max_r1 = -INFINITY;
+			for (int p = 0; p < poly1->vertices.size(); p++)
+			{
+				float q = (poly1->vertices[p].x * axisProj.x + poly1->vertices[p].y * axisProj.y);
+				min_r1 = std::min(min_r1, q);
+				max_r1 = std::max(max_r1, q);
+			}
+
+			// Work out min and max 1D points for r2
+			float min_r2 = INFINITY, max_r2 = -INFINITY;
+			for (int p = 0; p < poly2->vertices.size(); p++)
+			{
+				float q = (poly2->vertices[p].x * axisProj.x + poly2->vertices[p].y * axisProj.y);
+				min_r2 = std::min(min_r2, q);
+				max_r2 = std::max(max_r2, q);
+			}
+
+			if (!(max_r2 >= min_r1 && max_r1 >= min_r2))
+				return false;
+		}
 	}
+
+	return true;
+}
+
+bool Tools::CheckCollision(Object& obj1, Object& obj2)
+{
+
+
+	return false;
 }

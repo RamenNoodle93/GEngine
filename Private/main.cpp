@@ -21,18 +21,22 @@ int main()
 	{
 
 		sf::Event event;
-		std::vector<sf::Event> eventList;
+
+		std::vector<sf::Event> events;
+
 		while (window.pollEvent(event))
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
 
-			eventList.push_back(event);
+			events.push_back(event);
+
 		}
 
 		float deltaTime = clock.restart().asSeconds();
 
-		mainGame.Update(deltaTime, eventList);
+		mainGame.HandleEvents(events);
+		mainGame.Update(deltaTime);
 
 		std::vector<Projected> projected = game.Projection();
 		window.clear(sf::Color::Black);
@@ -40,7 +44,7 @@ int main()
 		for (auto& obj : projected)
 		{
 
-			Tools::DrawTriangle(obj, window, true);
+			Tools::DrawTriangle(obj, window, obj.outline, obj.solid, obj.color);
 
 		}
 		window.display();

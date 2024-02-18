@@ -30,12 +30,19 @@ constexpr u32 generationSize{ sizeof(idType) * 8 - indexSize };
 constexpr idType indexMask{ (idType { 1 } << indexSize) - 1 };
 constexpr idType generationMask{ ~((idType { 1 } << generationSize) - 1) };
 
+//Podstawowe typy danych
+
 struct Node
 {
 	float x = 0.0f;
 	float y = 0.0f;
 	float z = 0.0f;
 	float w = 1.0f;
+};
+
+struct Mat4x4
+{
+	float m[4][4] = { 0.0f };
 };
 
 struct Point
@@ -49,10 +56,18 @@ struct PositionData
 	Node position;
 };
 
+struct Position2D
+{
+	Point position;
+	float rotation;
+};
+
 struct Triangle
 {
 	Node p[3];
 };
+
+//Rozne struktury do obslugi obiektow
 
 struct Mesh
 {
@@ -103,13 +118,24 @@ struct Mesh
 
 };
 
+struct CollisionObject
+{
+	std::vector<Point> points;
+	std::vector<Point> vertices; //Punkty po rzutowaniu
+	Position2D posData;
+};
+
 struct Object
 {
 	idType meshId;
 	PositionData location;
-	bool flat;
 	idType typeId;
 	sf::Color color;
+	CollisionObject collider;
+	float size = 1.0f;
+	bool flat = false;
+	bool outline = true;
+	bool solid = false;
 };
 
 struct Projected
@@ -117,9 +143,6 @@ struct Projected
 	sf::Color color;
 	std::vector<Triangle> tris;
 	float depth;
-};
-
-struct Mat4x4
-{
-	float m[4][4] = { 0.0f };
+	bool outline = true;
+	bool solid = false;
 };

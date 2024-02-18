@@ -94,6 +94,10 @@ std::vector<Projected> Game::Projection()
 					Tools::DivideVector(projected.p[1], projected.p[1].w, scaled.p[1]);
 					Tools::DivideVector(projected.p[2], projected.p[2].w, scaled.p[2]);
 
+					Tools::MultiplyVector(scaled.p[0], currentObj.size, scaled.p[0]);
+					Tools::MultiplyVector(scaled.p[1], currentObj.size, scaled.p[1]);
+					Tools::MultiplyVector(scaled.p[2], currentObj.size, scaled.p[2]);
+
 					for (int i = 0; i < 3; i++) {
 						tempTriangle.p[i] = Node{ scaled.p[i].x * (-200) + 400, scaled.p[i].y * (-200) + 400, scaled.p[i].z };
 					}
@@ -106,12 +110,11 @@ std::vector<Projected> Game::Projection()
 		{
 			for (auto& tri : objMesh.tris)
 			{
+
 				Triangle temp;
 
-				std::cout << currentObj.meshId << '\n';
-
 				for (int i = 0; i < 3; i++) {
-					temp.p[i] = Node{ tri.p[i].x * (-200) + 400, tri.p[i].y * (-200) + 400, tri.p[i].z };
+					temp.p[i] = Node{ (tri.p[i].x + currentObj.location.position.x) * (-200) * currentObj.size + 400, (tri.p[i].y + currentObj.location.position.y) * currentObj.size * (-200) + 400, tri.p[i].z };
 				}
 
 				projectedTris.push_back(temp);
@@ -127,7 +130,7 @@ std::vector<Projected> Game::Projection()
 					  return z1 > z2;
 				  });
 
-		projectedObjs.push_back(Projected{ currentObj.color , projectedTris, currentObj.location.position.z });
+		projectedObjs.push_back(Projected{ currentObj.color , projectedTris, currentObj.location.position.z, currentObj.outline, currentObj.solid });
 
 	}
 
@@ -155,9 +158,13 @@ idType Game::LoadNewMesh(std::string fileName) //Ladowanie siatki do tablicy 'me
 	return meshCount - 1;
 }
 
-idType Game::AddNewObject(idType meshId, PositionData pos, bool entity, idType type, sf::Color color)
+idType Game::AddNewObject(idType meshId, PositionData pos, idType type, sf::Color color, float scale, bool flat, bool outline, bool solid)
 {
-	Object tempObject = Object{ meshId, pos, entity, type , color };
+	Object tempObject = Object{ meshId, pos, type , color };
+	tempObject.size = scale;
+	tempObject.solid = solid;
+	tempObject.outline = outline;
+	tempObject.flat = flat;
 
 	objects[objCount] = tempObject;
 	objCount++;
@@ -167,7 +174,7 @@ idType Game::AddNewObject(idType meshId, PositionData pos, bool entity, idType t
 
 idType Game::RemoveObjectFromId(idType idToDelete)
 {
-	Object dummyObj = Object{ 0, PositionData{Node{0,0,0}, Node{0,0,0}}, false, 0 };
+	Object dummyObj = Object{ 0, PositionData{Node{0,0,0}, Node{0,0,0}}, false };
 
 	objects[idToDelete] = objects[objCount - 1];
 	objects[objCount - 1] = dummyObj;

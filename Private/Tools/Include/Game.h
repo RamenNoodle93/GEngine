@@ -23,14 +23,14 @@ public:
 	~Game();
 	std::vector<Projected> Projection();
 	idType LoadNewMesh(std::string fileName);
-	idType AddNewObject(idType meshId, PositionData pos, bool entity, idType type, sf::Color color);
+	idType AddNewObject(idType meshId, PositionData pos, idType type, sf::Color color, float scale = 1.0f, bool flat = false, bool outline = true, bool solid = false);
 	idType RemoveObjectFromId(idType idToDelete);
 
 	PositionData camera;
 	int objCount;
 	int meshCount;
-	Object objects[16384];
-	Mesh meshes[4096];
+	Object objects[4096];
+	Mesh meshes[512];
 
 	std::map<std::string, int> objectMeshNames;
 };
