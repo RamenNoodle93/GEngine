@@ -176,10 +176,12 @@ idType Game::RemoveObjectFromId(idType idToDelete)
 {
 	Object dummyObj = Object{ 0, PositionData{Node{0,0,0}, Node{0,0,0}}, false };
 
-	objects[idToDelete] = objects[objCount - 1];
-	objects[objCount - 1] = dummyObj;
+	if (objCount != 0)
+	{
+		objects[idToDelete] = objects[objCount - 1];
+		objects[objCount - 1] = dummyObj;
 
-	objCount--;
-
+		objCount--;
+	}
 	return objCount;
 }

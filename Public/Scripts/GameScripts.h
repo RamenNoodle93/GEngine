@@ -19,4 +19,5 @@ private:
 	int objectTypes[256];
 	int menuSelection;
 	int stage;
+	int prevStage;
 };

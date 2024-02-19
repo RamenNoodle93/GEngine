@@ -361,7 +361,14 @@ bool Tools::ShapeOverlapSAT(Object& obj1, Object& obj2)
 
 bool Tools::CheckCollision(Object& obj1, Object& obj2)
 {
+	float dx = obj1.location.position.x - obj2.location.position.x;
+	float dy = obj1.location.position.y - obj2.location.position.y;
+	float dz = obj1.location.position.z - obj2.location.position.z;
 
+	float dist = std::sqrtf(powf(dx, 2) + powf(dy, 2) + powf(dz, 2));
+
+	if (dist < 2 * (obj1.size + obj2.size))
+		return true;
 
 	return false;
 }
