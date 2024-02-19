@@ -37,7 +37,7 @@ int main()
 
 		float deltaTime = clock.restart().asSeconds();
 
-		std::cout << "FPS: " << 1 / deltaTime << '\n';
+		//std::cout << "FPS: " << 1 / deltaTime << '\n';
 
 		open = mainGame.HandleEvents(events);
 		mainGame.Update(deltaTime);

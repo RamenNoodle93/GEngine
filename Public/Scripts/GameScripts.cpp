@@ -44,14 +44,16 @@ bool GameScripts::HandleEvents(std::vector<sf::Event> events)
 					case 0:
 						if (event.key.code == sf::Keyboard::Up)
 						{
-							menuSelection = (menuSelection - 2) % 6;
+							menuSelection = (menuSelection - 3) % 8;
 							if (menuSelection < 0)
-								menuSelection = 5;
+								menuSelection = 7;
 						}
 
 						if (event.key.code == sf::Keyboard::Down)
 						{
-							menuSelection = (menuSelection + 2) % 6;
+							menuSelection = (menuSelection + 3) % 8;
+							if (menuSelection == 2)
+								menuSelection = 1;
 						}
 
 						if (event.key.code == sf::Keyboard::Enter)
@@ -88,6 +90,7 @@ void GameScripts::Update(float deltaTime)
 		{
 			game->ResetObjectFromId(i);
 		}
+		game->objCount = 0;
 	}
 
 	//Przykladowy input klawiszy
@@ -105,16 +108,34 @@ void GameScripts::Update(float deltaTime)
 				game->AddNewObject(game->objectMeshNames["asteroids_text.obj"], objLocation, 0, sf::Color(255, 255, 255, 255), 0.5, true, false, true);
 
 				objLocation.position.y += 150;
-				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 255, 50), 0.5, true, false, true);
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 0, 255, 255), 0.5, true, false, true);
+
+				objLocation.position.z = 1;
 				game->AddNewObject(game->objectMeshNames["start_text.obj"], objLocation, 0, sf::Color(255, 255, 255, 255), 0.35, true, false, true);
 
-				objLocation.position.y += 150;
-				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 255, 50), 0.5, true, false, true);
-				game->AddNewObject(game->objectMeshNames["settings_text.obj"], objLocation, 0, sf::Color(255, 255, 255, 255), 0.35, true, false, true);
+				objLocation.position.z = -5;
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 0, 255), 0.6, true, false, true);
+				objLocation.position.z = 0;
 
 				objLocation.position.y += 150;
-				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 255, 50), 0.5, true, false, true);
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 0, 255, 255), 0.5, true, false, true);
+
+				objLocation.position.z = 1;
+				game->AddNewObject(game->objectMeshNames["settings_text.obj"], objLocation, 0, sf::Color(255, 255, 255, 255), 0.35, true, false, true);
+
+				objLocation.position.z = -5;
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 0, 255), 0.6, true, false, true);
+				objLocation.position.z = 0;
+
+				objLocation.position.y += 150;
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 0, 255, 255), 0.5, true, false, true);
+
+				objLocation.position.z = 1;
 				game->AddNewObject(game->objectMeshNames["exit_text.obj"], objLocation, 0, sf::Color(255, 255, 255, 255), 0.35, true, false, true);
+
+				objLocation.position.z = -5;
+				game->AddNewObject(game->objectMeshNames["rectangle.obj"], objLocation, 1, sf::Color(255, 255, 0, 255), 0.6, true, false, true);
+				objLocation.position.z = 0;
 
 				std::random_device random;
 				std::mt19937 generator(random());
@@ -138,9 +159,9 @@ void GameScripts::Update(float deltaTime)
 				prevStage = 0;
 			}
 
-			game->objects[1].color = sf::Color(255, 255, 255, 50);
-			game->objects[3].color = sf::Color(255, 255, 255, 50);
-			game->objects[5].color = sf::Color(255, 255, 255, 50);
+			game->objects[1].color = sf::Color(255, 0, 255, 255);
+			game->objects[4].color = sf::Color(255, 0, 255, 255);
+			game->objects[7].color = sf::Color(255, 0, 255, 255);
 
 			game->objects[menuSelection].color = sf::Color(255, 255, 255, 100);
 
