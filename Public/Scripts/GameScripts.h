@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 #include "../../Private/Tools/Include/Game.h"
 #include "../../Private/Tools/CommonHeaders.h"
 
@@ -10,7 +12,7 @@ public:
 	GameScripts(sf::RenderWindow& window, Game& game);
 	~GameScripts();
 
-	void HandleEvents(std::vector<sf::Event> events);
+	bool HandleEvents(std::vector<sf::Event> events);
 	void Update(float deltaTime);
 
 private:
@@ -20,4 +22,8 @@ private:
 	int menuSelection;
 	int stage;
 	int prevStage;
+	int playerId;
+	float acceleration;
+	float velocityX;
+	float velocityY;
 };

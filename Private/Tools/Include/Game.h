@@ -25,6 +25,7 @@ public:
 	idType LoadNewMesh(std::string fileName);
 	idType AddNewObject(idType meshId, PositionData pos, idType type, sf::Color color, float scale = 1.0f, bool flat = false, bool outline = true, bool solid = false);
 	idType RemoveObjectFromId(idType idToDelete);
+	void ResetObjectFromId(idType idToReset);
 
 	PositionData camera;
 	int objCount;

@@ -17,7 +17,9 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(size.x, size.y), name);
 	GameScripts mainGame(window, game);
 
-	while (window.isOpen())
+	bool open = true;
+
+	while (window.isOpen() && open)
 	{
 
 		sf::Event event;
@@ -35,7 +37,9 @@ int main()
 
 		float deltaTime = clock.restart().asSeconds();
 
-		mainGame.HandleEvents(events);
+		std::cout << "FPS: " << 1 / deltaTime << '\n';
+
+		open = mainGame.HandleEvents(events);
 		mainGame.Update(deltaTime);
 
 		std::vector<Projected> projected = game.Projection();

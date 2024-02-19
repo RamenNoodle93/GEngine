@@ -114,7 +114,10 @@ std::vector<Projected> Game::Projection()
 				Triangle temp;
 
 				for (int i = 0; i < 3; i++) {
-					temp.p[i] = Node{ (tri.p[i].x + currentObj.location.position.x) * (-200) * currentObj.size + 400, (tri.p[i].y + currentObj.location.position.y) * currentObj.size * (-200) + 400, tri.p[i].z };
+
+					temp.p[i] = Node{ tri.p[i].x * cosf(currentObj.location.rotation.z) - tri.p[i].y * sinf(currentObj.location.rotation.z), tri.p[i].x * sinf(currentObj.location.rotation.z) + tri.p[i].y * cosf(currentObj.location.rotation.z), tri.p[i].z };
+					temp.p[i] = Node{ (temp.p[i].x) * (-200) * currentObj.size + 400 + currentObj.location.position.x, (temp.p[i].y) * currentObj.size * (-200) + 400 + currentObj.location.position.y, temp.p[i].z };
+
 				}
 
 				projectedTris.push_back(temp);
@@ -136,7 +139,7 @@ std::vector<Projected> Game::Projection()
 
 	std::sort(projectedObjs.begin(), projectedObjs.end(), [](Projected& obj1, Projected& obj2)
 			  {
-				  return obj1.depth > obj2.depth;
+				  return obj1.depth < obj2.depth;
 			  });
 
 	return projectedObjs;
@@ -183,5 +186,11 @@ idType Game::RemoveObjectFromId(idType idToDelete)
 
 		objCount--;
 	}
+
 	return objCount;
+}
+
+void Game::ResetObjectFromId(idType idToReset)
+{
+	objects[idToReset] = Object{ 0, PositionData{Node{0,0,0}, Node{0,0,0}}, false };
 }
